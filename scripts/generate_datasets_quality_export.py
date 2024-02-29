@@ -11,7 +11,8 @@ URL = "https://data.economie.gouv.fr/api/explore/v2.1/catalog/datasets/"
 def get_datasets():
     with open("data/datasets.csv", "r") as datasets_csv:
         reader = csv.DictReader(datasets_csv)
-        result = [row for row in reader if row["published"] == "True" and row["restricted"] == "False"]
+        result = [row for row in reader]
+        # result = [row for row in reader if row["published"] == "True" and row["restricted"] == "False"]
         return result
 
 
@@ -41,5 +42,5 @@ with open("datasets_quality_report.csv", "w") as report_file:
         data = query_ods(url=URL, params=params)
         ds_report = get_dataset_quality_score(data=data, dcat=False, pprint=True)
 
-        # writer.writerow({**ds, **ds_report})
+        writer.writerow({**ds, **ds_report})
         time.sleep(0.5)
