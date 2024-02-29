@@ -3,11 +3,11 @@ import sqlite3
 
 
 def create_table():
-    connection = sqlite3.connect('../../database.sqlite')  # Replace 'your_database.db' with your desired database name
+    connection = sqlite3.connect("../../database.sqlite")  # Replace 'your_database.db' with your desired database name
     cursor = connection.cursor()
 
     # SQL statement to create the table
-    create_table_sql = '''
+    create_table_sql = """
     CREATE TABLE quality_view (
          id INTEGER PRIMARY KEY,
          created TEXT,
@@ -22,7 +22,7 @@ def create_table():
          dcat_metadata_percent INTEGER,
          quality_score INTEGER
     );
-    '''
+    """
 
     cursor.execute(create_table_sql)
 
@@ -31,31 +31,39 @@ def create_table():
 
 
 def import_quality_report():
-    connection = sqlite3.connect('database.sqlite')
+    connection = sqlite3.connect("database.sqlite")
     cursor = connection.cursor()
 
-    with open("datasets_quality_report.csv", 'r') as csv_file:
+    with open("datasets_quality_report.csv", "r") as csv_file:
         csv_reader = csv.DictReader(csv_file)
         for row in csv_reader:
             # Convert 'published' and 'restricted' columns to boolean
-            row['published'] = row['published'].lower() == 'true'
-            row['restricted'] = row['restricted'].lower() == 'true'
+            row["published"] = row["published"].lower() == "true"
+            row["restricted"] = row["restricted"].lower() == "true"
 
             # Insert data into the database
-            cursor.execute('''
+            cursor.execute(
+                """
                 INSERT INTO quality_view (
                     created, updated, dataset_id, title, publisher, published,
                     restricted, description_metadata_percent, default_metadata_percent,
                     dcat_metadata_percent, quality_score
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ''', (
-                row['created'], row['updated'], row['dataset_id'], row['title'],
-                row['publisher'], row['published'], row['restricted'],
-                row['description_metadata_percent'],
-                row['default_metadata_percent'],
-                row['dcat_metadata_percent'],
-                row['quality_score']
-            ))
+            """,
+                (
+                    row["created"],
+                    row["updated"],
+                    row["dataset_id"],
+                    row["title"],
+                    row["publisher"],
+                    row["published"],
+                    row["restricted"],
+                    row["description_metadata_percent"],
+                    row["default_metadata_percent"],
+                    row["dcat_metadata_percent"],
+                    row["quality_score"],
+                ),
+            )
 
     connection.commit()
     connection.close()

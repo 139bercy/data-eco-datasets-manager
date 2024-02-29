@@ -21,7 +21,7 @@ def dataset():
 @click.option("-n", "--name", help="Dataset name")
 @click.option("-o", "--output", help="File name if request needs to be exported to json")
 @click.option("--no-dcat", is_flag=True, help="Take out DCAT from score calculation")
-@click.option('-s', '--source', type=click.Choice(['api', 'file']), default="file", help='Source')
+@click.option("-s", "--source", type=click.Choice(["api", "file"]), default="file", help="Source")
 def check_dataset_quality(name, output, no_dcat, source):
     data = {}
     print(no_dcat)
@@ -47,7 +47,7 @@ def create_database():
 
 
 @database.command("import")
-@click.option('-r', '--report', type=click.Choice(['quality']), help='Report name')
+@click.option("-r", "--report", type=click.Choice(["quality"]), help="Report name")
 def database_import(report):
     if report == "quality":
         import_quality_report()

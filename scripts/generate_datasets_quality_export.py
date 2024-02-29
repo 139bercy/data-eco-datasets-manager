@@ -18,7 +18,19 @@ def get_datasets():
 datasets = get_datasets()
 
 with open("datasets_quality_report.csv", "w") as report_file:
-    headers = ['created', 'updated', 'dataset_id', 'title', 'publisher', 'published', 'restricted', 'description_metadata_percent', 'default_metadata_percent', 'dcat_metadata_percent', "quality_score"]
+    headers = [
+        "created",
+        "updated",
+        "dataset_id",
+        "title",
+        "publisher",
+        "published",
+        "restricted",
+        "description_metadata_percent",
+        "default_metadata_percent",
+        "dcat_metadata_percent",
+        "quality_score",
+    ]
     writer = csv.DictWriter(report_file, fieldnames=headers)
     writer.writeheader()
     for ds in datasets:

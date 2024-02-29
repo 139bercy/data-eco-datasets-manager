@@ -7,10 +7,7 @@ from src.core.output import export
 FETCH_FROM_API = False
 FILENAME = "datasets"
 if FETCH_FROM_API:
-    response = query_ods(
-        url="https://data.economie.gouv.fr/api/automation/v1.0/datasets/",
-        params={"limit": 1000}
-    )
+    response = query_ods(url="https://data.economie.gouv.fr/api/automation/v1.0/datasets/", params={"limit": 1000})
     export(response=response, filename=f"../data/{FILENAME}.json")
 else:
     with open(f"../data/{FILENAME}.json", "r") as file:
