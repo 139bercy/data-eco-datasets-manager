@@ -3,7 +3,7 @@ import os.path
 
 import click
 
-from core.configuration import RAW_DATASETS_PATH
+from core.configuration import RAW_DATASETS_PATH, DOMAIN_NAME
 from core.output import export, format_dataset_report, csv_format_datasets_list
 
 from core.api import get_dataset_from_api, get_dataset_from_file, query_ods
@@ -12,7 +12,7 @@ from quality import get_dataset_quality_score
 
 
 @click.group()
-def cli(args=None):
+def cli():
     """Application CLI"""
 
 
@@ -24,9 +24,8 @@ def api():
 @api.command("get-datasets")
 def get_datasets():
     """Retrieve datasets"""
-    response = query_ods(url="https://data.economie.gouv.fr/api/automation/v1.0/datasets/", params={"limit": 1000})
+    response = query_ods(url=f"{DOMAIN_NAME}/api/automation/v1.0/datasets/", params={"limit": 1000})
     export(response=response, filename=RAW_DATASETS_PATH)
-    click.echo("data/datasets.json file has been updated.")
 
 
 @cli.group("dataset")

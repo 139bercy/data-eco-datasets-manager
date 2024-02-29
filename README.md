@@ -20,13 +20,12 @@ $ pip setup.py install
 
 ### Télécharger la liste des datasets
 
-Pour un premier téléchargement, modifier le paramètre `FETCH_FROM_API` à `True` dans le fichier `scripts/get_datasets_list.py`,
+La requête étant un peu lourde, il peut être pertinent d'utiliser le fichier `data/datasets.json` comme source pour 
+des traitements réguliers.
 
 ```
-$ python scripts/get_datasets_list.py
+$ cli api get-datasets
 ```
-
-La requête étant un peu lourde, il peut être pertinent d'utiliser le fichier `data/datasets.json` comme source. 
 
 ## Générer un rapport qualité
 

@@ -2,11 +2,11 @@ import csv
 import time
 
 from core.api import query_ods
-from core.configuration import FORMATTED_DATASETS_LIST
+from core.configuration import FORMATTED_DATASETS_LIST, DOMAIN_NAME
 from quality import get_dataset_quality_score
 
 
-URL = "https://data.economie.gouv.fr/api/explore/v2.1/catalog/datasets/"
+URL = f"{DOMAIN_NAME}/api/explore/v2.1/catalog/datasets/"
 
 
 def get_datasets():

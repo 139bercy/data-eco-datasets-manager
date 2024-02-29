@@ -3,11 +3,11 @@ import csv
 import json
 from datetime import datetime
 
-from core.configuration import RAW_DATASETS_PATH, FORMATTED_DATASETS_LIST
+from core.configuration import RAW_DATASETS_PATH, FORMATTED_DATASETS_LIST, DOMAIN_NAME
 
-URL = "https://data.economie.gouv.fr/api/automation/v1.0/datasets/"
+URL = f"{DOMAIN_NAME}/api/automation/v1.0/datasets/"
 
-# URL = "https://data.economie.gouv.fr/api/automation/v1.0/users/"
+# URL = "{DOMAIN_NAME}/api/automation/v1.0/users/"
 START_DATE = "2023-10-01T00:00:00Z"
 END_DATE = "2023-11-30T00:00:00Z"
 

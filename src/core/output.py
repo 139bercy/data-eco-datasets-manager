@@ -21,7 +21,7 @@ def export(response, filename):
     print(f"File {filename} has been created!")
 
 
-def csv_format_datasets_list(report: dict):
+def csv_format_datasets_list(report: list):
     with open(FORMATTED_DATASETS_LIST, "w") as output:
         headers = report[0].keys()
         writer = csv.DictWriter(f=output, fieldnames=headers)

@@ -2,7 +2,7 @@ import json
 
 import requests
 
-from core.configuration import HEADERS
+from core.configuration import HEADERS, DOMAIN_NAME
 from core.exceptions import HTTPError
 from core.output import response_to_json, export
 
@@ -17,7 +17,7 @@ def query_ods(url: str, params: dict):
 
 
 def get_dataset_from_api(name, output):
-    url = "https://data.economie.gouv.fr/api/explore/v2.1/catalog/datasets/"
+    url = f"{DOMAIN_NAME}/api/explore/v2.1/catalog/datasets/"
     params = {"where": f"dataset_id='{name}'", "include_app_metas": True}
     response = query_ods(url=url, params=params)
     if output:
