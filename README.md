@@ -13,6 +13,7 @@ Merci de vous reporter à la [documentation Opendatasoft](https://help.opendatas
 $ python -m venv venv
 $ source venv/bin/activate
 $ pip install -r requirements.txt
+$ pip setup.py install
 ```
 
 ## Usage
@@ -26,4 +27,10 @@ $ python scripts/get_datasets_list.py
 ```
 
 La requête étant un peu lourde, il peut être pertinent d'utiliser le fichier `data/datasets.json` comme source. 
+
+## Générer un rapport qualité
+
+```
+$ python scripts/generate_datasets_quality_export.py
+```
 
