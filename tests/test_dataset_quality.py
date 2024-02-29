@@ -1,9 +1,9 @@
 import pytest
 
 from src.quality import (
-    get_global_quality_ratio,
-    get_metadata_quality_ratio,
-    get_dataset_quality_ratio,
+    get_global_quality_score,
+    get_metadata_quality_score,
+    get_dataset_quality_score,
 )
 
 
@@ -27,51 +27,51 @@ def dataset():
 
 def test_get_dataset_quality_report(dataset):
     # Act
-    report = get_dataset_quality_ratio(data=dataset)
+    report = get_dataset_quality_score(data=dataset)
     # Assert
-    assert report["quality_ratio"] == 75
+    assert report["quality_score"] == 75
 
 
 def test_get_dataset_quality_report_without_dcat(dataset):
     # Act
-    report = get_dataset_quality_ratio(data=dataset, dcat=False)
+    report = get_dataset_quality_score(data=dataset, dcat=False)
     # Assert
     assert report["dcat_metadata_percent"] == "N/A"
-    assert report["quality_ratio"] == 50
+    assert report["quality_score"] == 50
 
 
 def test_dataset_is_empty_should_give_default_report():
     # Arrange
     dataset = {"total_count": 0, "results": []}
     # Act
-    report = get_dataset_quality_ratio(data=dataset)
+    report = get_dataset_quality_score(data=dataset)
     assert report == {
         "description_metadata_percent": "N/A",
         "default_metadata_percent": "N/A",
         "dcat_metadata_percent": "N/A",
-        "quality_ratio": "N/A",
+        "quality_score": "N/A",
     }
 
 
-def test_calculate_average_ratio():
+def test_calculate_average_score():
     # Arrange
     metrics = [10, 12, 14]
     # Act
-    average = get_global_quality_ratio(metrics=metrics)
+    average = get_global_quality_score(metrics=metrics)
     # Assert
     assert average == 12
 
 
-def test_calculate_average_ratio_with_wrong_value():
+def test_calculate_average_score_with_wrong_value():
     # Arrange
     metrics = ["N/A", 10, 14]
     # Act
-    average = get_global_quality_ratio(metrics=metrics)
+    average = get_global_quality_score(metrics=metrics)
     # Assert
     assert average == 12
 
 
-def test_calculate_metadata_quality_ratio():
+def test_calculate_metadata_quality_score():
     # Arrange
     data = {
         "results": [
@@ -82,8 +82,8 @@ def test_calculate_metadata_quality_ratio():
         ]
     }
     # Act
-    report = get_metadata_quality_ratio(data, "default", pprint=True)
-    assert report["ratio"] == 50
+    report = get_metadata_quality_score(data, "default", pprint=True)
+    assert report["score"] == 50
 
 
 def test_calculate_metadata_field_is_false():
@@ -97,9 +97,9 @@ def test_calculate_metadata_field_is_false():
         ]
     }
     # Act
-    report = get_metadata_quality_ratio(data, "default", pprint=True)
+    report = get_metadata_quality_score(data, "default", pprint=True)
     # Assert
-    assert report["ratio"] == 50
+    assert report["score"] == 50
 
 
 def test_calculate_metadata_is_empty():
@@ -113,9 +113,9 @@ def test_calculate_metadata_is_empty():
         ]
     }
     # Act
-    report = get_metadata_quality_ratio(data, "default", pprint=True)
+    report = get_metadata_quality_score(data, "default", pprint=True)
     # Assert
-    assert report["ratio"] == "N/A"
+    assert report["score"] == "N/A"
 
 
 # def test_get_report():

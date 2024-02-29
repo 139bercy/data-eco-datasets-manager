@@ -20,7 +20,7 @@ def create_table():
          description_metadata_percent INTEGER,
          default_metadata_percent INTEGER,
          dcat_metadata_percent INTEGER,
-         quality_ratio INTEGER
+         quality_score INTEGER
     );
     '''
 
@@ -46,7 +46,7 @@ def import_quality_report():
                 INSERT INTO quality_view (
                     created, updated, dataset_id, title, publisher, published,
                     restricted, description_metadata_percent, default_metadata_percent,
-                    dcat_metadata_percent, quality_ratio
+                    dcat_metadata_percent, quality_score
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ''', (
                 row['created'], row['updated'], row['dataset_id'], row['title'],
@@ -54,7 +54,7 @@ def import_quality_report():
                 row['description_metadata_percent'],
                 row['default_metadata_percent'],
                 row['dcat_metadata_percent'],
-                row['quality_ratio']
+                row['quality_score']
             ))
 
     connection.commit()
