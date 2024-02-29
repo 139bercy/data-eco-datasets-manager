@@ -1,8 +1,9 @@
-import json
+import os.path
 
 import click
 
 from core.api import get_dataset_from_api, get_dataset_from_file
+from core.db import create_table, import_quality_report
 from quality import get_dataset_quality_ratio
 
 
@@ -30,3 +31,25 @@ def check_dataset_quality(name, output, no_dcat, source):
         data = get_dataset_from_file()
     print(f'Dataset: {data["results"][0]["dataset_id"]}')
     get_dataset_quality_ratio(data=data, dcat=False if no_dcat else True, pprint=True)
+
+
+@cli.group("database")
+def database():
+    """Manage sqlite3 database"""
+
+
+@database.command("create")
+def create_database():
+    if os.path.exists("database.sqlite"):
+        print("Database already exists")
+        return
+    create_table()
+
+
+@database.command("import")
+@click.option('-r', '--report', type=click.Choice(['quality']), help='Report name')
+def database_import(report):
+    if report == "quality":
+        import_quality_report()
+        return
+    print("ERROR: Fill report category name")
