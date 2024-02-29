@@ -54,7 +54,6 @@ def format_list():
 def check_dataset_quality(name, output, no_dcat, source):
     """Check dedicated dataset quality"""
     data = {}
-    print(no_dcat)
     if source == "api":
         data = get_dataset_from_api(name, output)
     elif source == "file":

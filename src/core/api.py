@@ -22,6 +22,7 @@ def get_dataset_from_api(name, output):
     response = query_ods(url=url, params=params)
     if output:
         export(response=response, filename=f"data/dataset-sample.json")
+    return response
 
 
 def get_dataset_from_file():
