@@ -1,6 +1,6 @@
 # ODS API
 
-Premiers scripts de gestion de la plateforme Data Eco avec l'API ODS. 
+Outil de monitoring et de pilotage pour la plateforme Data Economie.
 
 ## Requirements
 
