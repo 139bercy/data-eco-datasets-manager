@@ -48,7 +48,7 @@ def format_list():
 
 @dataset.command("check-quality")
 @click.option("-n", "--name", help="Dataset name")
-@click.option("-o", "--output", help="File name if request needs to be exported to json")
+@click.option("-o", "--output", is_flag=True, help="File name if request needs to be exported to json")
 @click.option("--no-dcat", is_flag=True, help="Take out DCAT from score calculation")
 @click.option("-s", "--source", type=click.Choice(["api", "file"]), default="file", help="Source")
 def check_dataset_quality(name, output, no_dcat, source):

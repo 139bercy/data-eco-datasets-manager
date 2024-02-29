@@ -33,3 +33,9 @@ $ cli api get-datasets
 $ python scripts/generate_datasets_quality_export.py
 ```
 
+Pour vérifier le score d'un jeu de données : 
+
+```
+$ cli dataset check-quality -s api -n <dataset_id> --no-dcat
+```
+
