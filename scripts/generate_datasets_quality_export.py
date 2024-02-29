@@ -18,7 +18,7 @@ def get_datasets():
 
 datasets = get_datasets()
 
-with open("datasets_quality_report.csv", "w") as report_file:
+with open("data/datasets_quality_report.csv", "w") as report_file:
     headers = [
         "created",
         "updated",

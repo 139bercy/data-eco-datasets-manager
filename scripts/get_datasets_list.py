@@ -1,16 +1,16 @@
 import json
 import csv
 
-from src.core.api import query_ods
-from src.core.output import export
+from core.api import query_ods
+from core.output import export
 
 FETCH_FROM_API = False
 FILENAME = "datasets"
 if FETCH_FROM_API:
     response = query_ods(url="https://data.economie.gouv.fr/api/automation/v1.0/datasets/", params={"limit": 1000})
-    export(response=response, filename=f"../data/{FILENAME}.json")
+    export(response=response, filename=f"data/{FILENAME}.json")
 else:
-    with open(f"../data/{FILENAME}.json", "r") as file:
+    with open(f"data/{FILENAME}.json", "r") as file:
         report = []
         data = json.load(file)
         datasets = data["results"]
@@ -26,7 +26,7 @@ else:
                 "restricted": dataset["is_restricted"],
             }
             report.append(dataset_report)
-        with open("../data/datasets.csv", "w") as output:
+        with open("data/datasets.csv", "w") as output:
             headers = report[0].keys()
             writer = csv.DictWriter(f=output, fieldnames=headers)
             writer.writeheader()
