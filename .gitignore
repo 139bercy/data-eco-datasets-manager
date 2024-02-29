@@ -1,6 +1,8 @@
 # Created by https://www.toptal.com/developers/gitignore/api/python
 # Edit at https://www.toptal.com/developers/gitignore?templates=python
 
+.DS_Store
+
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -180,5 +182,9 @@ pyrightconfig.json
 *.iml
 
 ## App
-data
 dev
+
+## Data
+*.csv
+*.json
+*.zip
