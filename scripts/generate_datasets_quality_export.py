@@ -2,6 +2,7 @@ import csv
 import time
 
 from core.api import query_ods
+from core.configuration import FORMATTED_DATASETS_LIST
 from quality import get_dataset_quality_score
 
 
@@ -9,7 +10,7 @@ URL = "https://data.economie.gouv.fr/api/explore/v2.1/catalog/datasets/"
 
 
 def get_datasets():
-    with open("data/datasets.csv", "r") as datasets_csv:
+    with open(FORMATTED_DATASETS_LIST, "r") as datasets_csv:
         reader = csv.DictReader(datasets_csv)
         result = [row for row in reader]
         # result = [row for row in reader if row["published"] == "True" and row["restricted"] == "False"]

@@ -1,8 +1,12 @@
+import json
 import os.path
 
 import click
 
-from core.api import get_dataset_from_api, get_dataset_from_file
+from core.configuration import RAW_DATASETS_PATH
+from core.output import export, format_dataset_report, csv_format_datasets_list
+
+from core.api import get_dataset_from_api, get_dataset_from_file, query_ods
 from core.db import create_table, import_quality_report
 from quality import get_dataset_quality_score
 
@@ -12,9 +16,35 @@ def cli(args=None):
     """Application CLI"""
 
 
+@cli.group("api")
+def api():
+    """Fetch data from ODS API"""
+
+
+@api.command("get-datasets")
+def get_datasets():
+    """Retrieve datasets"""
+    response = query_ods(url="https://data.economie.gouv.fr/api/automation/v1.0/datasets/", params={"limit": 1000})
+    export(response=response, filename=RAW_DATASETS_PATH)
+    click.echo("data/datasets.json file has been updated.")
+
+
 @cli.group("dataset")
 def dataset():
     """Dataset management"""
+
+
+@dataset.command("format-list")
+def format_list():
+    """Output datasets list in csv file"""
+    with open(RAW_DATASETS_PATH, "r") as file:
+        report = []
+        data = json.load(file)
+        datasets = data["results"]
+    for dataset in datasets:
+        dataset_report = format_dataset_report(dataset=dataset)
+        report.append(dataset_report)
+    csv_format_datasets_list(report)
 
 
 @dataset.command("check-quality")
@@ -23,6 +53,7 @@ def dataset():
 @click.option("--no-dcat", is_flag=True, help="Take out DCAT from score calculation")
 @click.option("-s", "--source", type=click.Choice(["api", "file"]), default="file", help="Source")
 def check_dataset_quality(name, output, no_dcat, source):
+    """Check dedicated dataset quality"""
     data = {}
     print(no_dcat)
     if source == "api":

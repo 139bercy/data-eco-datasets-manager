@@ -1,4 +1,7 @@
+import csv
 import json
+
+from core.configuration import FORMATTED_DATASETS_LIST
 
 
 def response_to_json(response):
@@ -16,3 +19,25 @@ def export(response, filename):
     with open(filename, "w") as file:
         json.dump(response, file, indent=2, ensure_ascii=False)
     print(f"File {filename} has been created!")
+
+
+def csv_format_datasets_list(report: dict):
+    with open(FORMATTED_DATASETS_LIST, "w") as output:
+        headers = report[0].keys()
+        writer = csv.DictWriter(f=output, fieldnames=headers)
+        writer.writeheader()
+        writer.writerows(report)
+    print(f"{FORMATTED_DATASETS_LIST} has been upserted.")
+
+
+def format_dataset_report(dataset: dict):
+    dataset_report = {
+        "created": dataset["created_at"],
+        "updated": dataset["updated_at"],
+        "dataset_id": dataset["dataset_id"],
+        "title": dataset.get("metadata", {}).get("default", {}).get("title", {}).get("value", None),
+        "publisher": dataset.get("metadata", {}).get("default", {}).get("publisher", {}).get("value", None),
+        "published": dataset["is_published"],
+        "restricted": dataset["is_restricted"],
+    }
+    return dataset_report

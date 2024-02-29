@@ -3,6 +3,8 @@ import csv
 import json
 from datetime import datetime
 
+from core.configuration import RAW_DATASETS_PATH, FORMATTED_DATASETS_LIST
+
 URL = "https://data.economie.gouv.fr/api/automation/v1.0/datasets/"
 
 # URL = "https://data.economie.gouv.fr/api/automation/v1.0/users/"
@@ -25,8 +27,8 @@ def handle_publisher(result):
 # response = requests.get(url=URL, headers=constants.HEADERS, params={"limit": 800, "offset": 0})
 # export(response, "datasets.json")
 
-with open("../datasets.json", "r") as file:
-    with open("../datasets.csv", "w") as output:
+with open(RAW_DATASETS_PATH, "r") as file:
+    with open(FORMATTED_DATASETS_LIST, "w") as output:
         writer = csv.writer(output, delimiter=",")
         writer.writerow(
             [
