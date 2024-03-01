@@ -1,0 +1,15 @@
+{
+  "total_count": 1,
+  "results": [
+    {
+      "created": "2024-01-01T00:00:00Z",
+      "updated": "2024-01-01T00:00:00Z",
+      "dataset_id": "test-dataset-1",
+      "title": "Test dataset",
+      "publisher": "AAA",
+      "published": "True",
+      "restricted": "False"
+    }
+  ]
+}
+

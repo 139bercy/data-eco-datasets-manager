@@ -2,7 +2,7 @@ import csv
 import time
 from datetime import datetime
 
-from core.api import query_ods
+from core.adapters.api import query_ods
 from core.configuration import FORMATTED_DATASETS_LIST, DOMAIN_NAME
 from quality import get_dataset_quality_score
 

@@ -1,0 +1,33 @@
+{
+  "total_count": 3,
+  "results": [
+    {
+      "created": "2024-01-01T00:00:00Z",
+      "updated": "2024-01-01T00:00:00Z",
+      "dataset_id": "test-dataset-1",
+      "title": "Test dataset",
+      "publisher": "AAA",
+      "published": "True",
+      "restricted": "False"
+    },
+    {
+      "created": "2024-01-01T00:00:00Z",
+      "updated": "2024-01-01T00:00:00Z",
+      "dataset_id": "test-dataset-2",
+      "title": "Test dataset",
+      "publisher": "BBB",
+      "published": "True",
+      "restricted": "False"
+    },
+    {
+      "created": "2024-01-01T00:00:00Z",
+      "updated": "2024-01-01T00:00:00Z",
+      "dataset_id": "test-dataset-3",
+      "title": "Test dataset",
+      "publisher": "BBB",
+      "published": "True",
+      "restricted": "False"
+    }
+  ]
+}
+

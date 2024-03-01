@@ -34,7 +34,7 @@ def test_get_dataset_quality_report(dataset):
 
 def test_get_dataset_quality_report_without_dcat(dataset):
     # Act
-    report = get_dataset_quality_score(data=dataset, dcat=False)
+    report = get_dataset_quality_score(data=dataset, dcat=False, pprint=False)
     # Assert
     assert report["dcat_score"] == "N/A"
     assert report["quality_score"] == 50
@@ -44,7 +44,7 @@ def test_dataset_is_empty_should_give_default_report():
     # Arrange
     dataset = {"total_count": 0, "results": []}
     # Act
-    report = get_dataset_quality_score(data=dataset)
+    report = get_dataset_quality_score(data=dataset, pprint=False)
     assert report == {"description_score": "N/A", "default_score": "N/A", "dcat_score": "N/A", "quality_score": "N/A"}
 
 
@@ -70,7 +70,7 @@ def test_calculate_metadata_quality_score():
     # Arrange
     data = {"results": [{"dataset_id": "test_dataset", "metas": {"default": {"field1": True, "field2": None}}}]}
     # Act
-    report = get_metadata_quality_score(data, "default", pprint=True)
+    report = get_metadata_quality_score(data, "default", pprint=False)
     assert report["score"] == 50
 
 
@@ -78,7 +78,7 @@ def test_calculate_metadata_field_is_false():
     # Arrange
     data = {"results": [{"dataset_id": "test_dataset", "metas": {"default": {"field1": False, "field2": None}}}]}
     # Act
-    report = get_metadata_quality_score(data, "default", pprint=True)
+    report = get_metadata_quality_score(data, "default", pprint=False)
     # Assert
     assert report["score"] == 50
 
@@ -87,6 +87,6 @@ def test_calculate_metadata_is_empty():
     # Arrange
     data = {"results": [{"dataset_id": "test_dataset", "metas": {"default": {}}}]}
     # Act
-    report = get_metadata_quality_score(data, "default", pprint=True)
+    report = get_metadata_quality_score(data, "default", pprint=False)
     # Assert
     assert report["score"] == "N/A"

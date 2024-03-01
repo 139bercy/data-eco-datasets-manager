@@ -1,0 +1,4 @@
+created,updated,dataset_id,title,publisher,published,restricted
+2024-01-01T00:00:00Z,2024-01-01T00:00:00Z,test-dataset-1,Test dataset,AAA,True,False
+2024-01-01T00:00:00Z,2024-01-01T00:00:00Z,test-dataset-2,Test dataset,BBB,True,False
+2024-01-01T00:00:00Z,2024-01-01T00:00:00Z,test-dataset-3,Test dataset,BBB,True,False

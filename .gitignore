@@ -183,8 +183,10 @@ pyrightconfig.json
 
 ## App
 dev
+tmp.py
 
 ## Data
-*.csv
-*.json
-*.zip
+data/*.csv
+data/*.json
+data/*.zip
+
