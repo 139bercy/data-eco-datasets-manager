@@ -12,3 +12,8 @@ Les données peuvent être exportées via :
 - Base de données PostgreSQL
 - Base de données SQLite
 
+Fonctionnalités : 
+- Ajouter une notion d'historique pour voir l'évolution de la qualité du jeu de données dans le temps.
+
+Refactor: 
+- Ajouter les ports et adapters prenant en compte les sources (import et export)
