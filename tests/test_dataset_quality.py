@@ -36,7 +36,7 @@ def test_get_dataset_quality_report_without_dcat(dataset):
     # Act
     report = get_dataset_quality_score(data=dataset, dcat=False)
     # Assert
-    assert report["dcat_metadata_percent"] == "N/A"
+    assert report["dcat_score"] == "N/A"
     assert report["quality_score"] == 50
 
 
@@ -46,9 +46,9 @@ def test_dataset_is_empty_should_give_default_report():
     # Act
     report = get_dataset_quality_score(data=dataset)
     assert report == {
-        "description_metadata_percent": "N/A",
-        "default_metadata_percent": "N/A",
-        "dcat_metadata_percent": "N/A",
+        "description_score": "N/A",
+        "default_score": "N/A",
+        "dcat_score": "N/A",
         "quality_score": "N/A",
     }
 

@@ -17,9 +17,9 @@ def get_report(data: dict, dcat: bool):
         dcat = {"score": "N/A"}
     total = get_global_quality_score([description["score"], default["score"], dcat["score"]])
     report = {
-        "description_metadata_percent": description["score"],
-        "default_metadata_percent": default["score"],
-        "dcat_metadata_percent": dcat["score"],
+        "description_score": description["score"],
+        "default_score": default["score"],
+        "dcat_score": dcat["score"],
         "quality_score": total,
     }
     return report
@@ -33,9 +33,9 @@ def get_global_quality_score(metrics):
 
 def handle_no_dataset_case():
     report = {
-        "description_metadata_percent": "N/A",
-        "default_metadata_percent": "N/A",
-        "dcat_metadata_percent": "N/A",
+        "description_score": "N/A",
+        "default_score": "N/A",
+        "dcat_score": "N/A",
         "quality_score": "N/A",
     }
     return report

@@ -17,9 +17,9 @@ def create_table():
          publisher TEXT,
          published BOOLEAN,
          restricted BOOLEAN,
-         description_metadata_percent INTEGER,
-         default_metadata_percent INTEGER,
-         dcat_metadata_percent INTEGER,
+         description_score INTEGER,
+         default_score INTEGER,
+         dcat_score INTEGER,
          quality_score INTEGER
     );
     """
@@ -46,8 +46,8 @@ def import_quality_report():
                 """
                 INSERT INTO quality_view (
                     created, updated, dataset_id, title, publisher, published,
-                    restricted, description_metadata_percent, default_metadata_percent,
-                    dcat_metadata_percent, quality_score
+                    restricted, description_score, default_score,
+                    dcat_score, quality_score
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
                 (
@@ -58,9 +58,9 @@ def import_quality_report():
                     row["publisher"],
                     row["published"],
                     row["restricted"],
-                    row["description_metadata_percent"],
-                    row["default_metadata_percent"],
-                    row["dcat_metadata_percent"],
+                    row["description_score"],
+                    row["default_score"],
+                    row["dcat_score"],
                     row["quality_score"],
                 ),
             )

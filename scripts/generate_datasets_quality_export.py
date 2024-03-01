@@ -28,9 +28,9 @@ with open("data/datasets_quality_report.csv", "w") as report_file:
         "publisher",
         "published",
         "restricted",
-        "description_metadata_percent",
-        "default_metadata_percent",
-        "dcat_metadata_percent",
+        "description_score",
+        "default_score",
+        "dcat_score",
         "quality_score",
     ]
     writer = csv.DictWriter(report_file, fieldnames=headers)
