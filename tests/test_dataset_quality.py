@@ -45,12 +45,7 @@ def test_dataset_is_empty_should_give_default_report():
     dataset = {"total_count": 0, "results": []}
     # Act
     report = get_dataset_quality_score(data=dataset)
-    assert report == {
-        "description_score": "N/A",
-        "default_score": "N/A",
-        "dcat_score": "N/A",
-        "quality_score": "N/A",
-    }
+    assert report == {"description_score": "N/A", "default_score": "N/A", "dcat_score": "N/A", "quality_score": "N/A"}
 
 
 def test_calculate_average_score():
@@ -73,14 +68,7 @@ def test_calculate_average_score_with_wrong_value():
 
 def test_calculate_metadata_quality_score():
     # Arrange
-    data = {
-        "results": [
-            {
-                "dataset_id": "test_dataset",
-                "metas": {"default": {"field1": True, "field2": None}},
-            }
-        ]
-    }
+    data = {"results": [{"dataset_id": "test_dataset", "metas": {"default": {"field1": True, "field2": None}}}]}
     # Act
     report = get_metadata_quality_score(data, "default", pprint=True)
     assert report["score"] == 50
@@ -88,14 +76,7 @@ def test_calculate_metadata_quality_score():
 
 def test_calculate_metadata_field_is_false():
     # Arrange
-    data = {
-        "results": [
-            {
-                "dataset_id": "test_dataset",
-                "metas": {"default": {"field1": False, "field2": None}},
-            }
-        ]
-    }
+    data = {"results": [{"dataset_id": "test_dataset", "metas": {"default": {"field1": False, "field2": None}}}]}
     # Act
     report = get_metadata_quality_score(data, "default", pprint=True)
     # Assert
@@ -104,49 +85,8 @@ def test_calculate_metadata_field_is_false():
 
 def test_calculate_metadata_is_empty():
     # Arrange
-    data = {
-        "results": [
-            {
-                "dataset_id": "test_dataset",
-                "metas": {"default": {}},
-            }
-        ]
-    }
+    data = {"results": [{"dataset_id": "test_dataset", "metas": {"default": {}}}]}
     # Act
     report = get_metadata_quality_score(data, "default", pprint=True)
     # Assert
     assert report["score"] == "N/A"
-
-
-# def test_get_report():
-#     # Arrange
-#     data = {
-#         "results": [
-#             {
-#                 "dataset_id": "test_dataset",
-#                 "metadata": {
-#                     "description": {
-#                         "field1": True,
-#                         "field2": None
-#                     },
-#                     "default": {
-#                         "field1": True,
-#                         "field2": None
-#                     },
-#                     "dcat": {
-#                         "field1": True,
-#                         "field2": None
-#                     },
-#                 }
-#             }
-#
-#         ]
-#     }
-#     # Act
-#     average = get_report(data=data, dcat=False)
-#     # Assert
-#     assert average == 25
-
-
-# def test_exclude_dcat_from_report():
-#     pass
