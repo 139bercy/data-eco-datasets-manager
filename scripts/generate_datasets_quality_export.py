@@ -1,5 +1,6 @@
 import csv
 import time
+from datetime import datetime
 
 from core.api import query_ods
 from core.configuration import FORMATTED_DATASETS_LIST, DOMAIN_NAME
@@ -7,6 +8,7 @@ from quality import get_dataset_quality_score
 
 
 URL = f"{DOMAIN_NAME}/api/explore/v2.1/catalog/datasets/"
+DCAT = False
 
 
 def get_datasets():
@@ -17,9 +19,15 @@ def get_datasets():
         return result
 
 
-datasets = get_datasets()
+def format_filename(filename: str):
+    now = datetime.now()
+    return f"{now.date()}-{filename}"
 
-with open("data/datasets_quality_report.csv", "w") as report_file:
+
+datasets = get_datasets()
+filename = format_filename(filename="datasets-quality-report.csv")
+
+with open(f"data/{filename}", "w") as report_file:
     headers = [
         "created",
         "updated",
@@ -41,7 +49,7 @@ with open("data/datasets_quality_report.csv", "w") as report_file:
         params = {"where": f"dataset_id='{ds_id}'", "include_app_metas": True}
 
         data = query_ods(url=URL, params=params)
-        ds_report = get_dataset_quality_score(data=data, dcat=False, pprint=True)
+        ds_report = get_dataset_quality_score(data=data, dcat=DCAT, pprint=True)
 
         writer.writerow({**ds, **ds_report})
         time.sleep(0.5)

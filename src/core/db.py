@@ -34,7 +34,7 @@ def import_quality_report():
     connection = sqlite3.connect("database.sqlite")
     cursor = connection.cursor()
 
-    with open("datasets_quality_report.csv", "r") as csv_file:
+    with open("2024-02-29-datasets-quality-report.csv", "r") as csv_file:
         csv_reader = csv.DictReader(csv_file)
         for row in csv_reader:
             # Convert 'published' and 'restricted' columns to boolean
