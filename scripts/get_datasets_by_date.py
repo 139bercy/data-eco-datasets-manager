@@ -19,9 +19,9 @@ def decode_date(chain):
 
 def handle_publisher(result):
     try:
-        return result["metadata"]["default"].get("publisher", None)["value"]
-    except TypeError as e:
-        return "NA"
+        return result["metadata"]["default"].get("publisher", "Non renseigné")["value"]
+    except TypeError:
+        return "NC"
 
 
 # response = requests.get(url=URL, headers=constants.HEADERS, params={"limit": 800, "offset": 0})

@@ -36,7 +36,7 @@ def format_dataset_report(dataset: dict):
         "updated": dataset["updated_at"],
         "dataset_id": dataset["dataset_id"],
         "title": dataset.get("metadata", {}).get("default", {}).get("title", {}).get("value", None),
-        "publisher": dataset.get("metadata", {}).get("default", {}).get("publisher", {}).get("value", None),
+        "publisher": dataset.get("metadata", {}).get("default", {}).get("publisher", {}).get("value", "Non renseigné"),
         "published": dataset["is_published"],
         "restricted": dataset["is_restricted"],
     }
