@@ -1,7 +1,7 @@
 import abc
 
 
-class AbstractDatasetRepository(abc.ABC):   # pragma: no cover
+class AbstractDatasetRepository(abc.ABC):  # pragma: no cover
     @abc.abstractmethod
     def get_all(self):
         pass

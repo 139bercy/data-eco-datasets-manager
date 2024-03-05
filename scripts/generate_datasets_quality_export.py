@@ -1,8 +1,8 @@
 import csv
 import time
-from datetime import datetime
 
-from core.adapters.api import query_ods
+from adapters.api import query_ods
+from common import format_filename
 from core.configuration import FORMATTED_DATASETS_LIST, DOMAIN_NAME
 from quality import get_dataset_quality_score
 
@@ -17,11 +17,6 @@ def get_datasets():
         result = [row for row in reader]
         # result = [row for row in reader if row["published"] == "True" and row["restricted"] == "False"]
         return result
-
-
-def format_filename(filename: str):
-    now = datetime.now()
-    return f"{now.date()}-{filename}"
 
 
 datasets = get_datasets()

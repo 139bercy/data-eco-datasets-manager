@@ -1,6 +1,8 @@
 import csv
 import sqlite3
 
+from common import format_filename
+
 
 def create_table():
     connection = sqlite3.connect("../../database.sqlite")  # Replace 'your_database.db' with your desired database name
@@ -34,7 +36,8 @@ def import_quality_report():
     connection = sqlite3.connect("database.sqlite")
     cursor = connection.cursor()
 
-    with open("2024-02-29-datasets-quality-report.csv", "r") as csv_file:
+    filename = format_filename("datasets-quality-report.csv", ".")
+    with open(f"{filename}-datasets-quality-report.csv", "r") as csv_file:
         csv_reader = csv.DictReader(csv_file)
         for row in csv_reader:
             # Convert 'published' and 'restricted' columns to boolean

@@ -6,8 +6,8 @@ import click
 from core.configuration import RAW_DATASETS_PATH, DOMAIN_NAME
 from core.output import export, format_dataset_report, csv_format_datasets_list
 
-from core.adapters.api import get_dataset_from_api, get_dataset_from_file, query_ods
-from core.adapters.secondaries import create_table, import_quality_report
+from adapters.api import get_dataset_from_api, get_dataset_from_file, query_ods
+from adapters.secondaries import create_table, import_quality_report
 from quality import get_dataset_quality_score
 
 
