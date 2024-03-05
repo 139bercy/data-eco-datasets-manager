@@ -27,6 +27,12 @@ des traitements réguliers.
 $ cli api get-datasets
 ```
 
+### Formater un output propre en csv
+
+```
+$ cli dataset format-list --exclude-not-published --exclude-restricted --input-file-date "2024-01-01"
+```
+
 ## Générer un rapport qualité
 
 ```

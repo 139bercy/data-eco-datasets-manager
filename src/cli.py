@@ -35,12 +35,12 @@ def dataset():
 
 
 @dataset.command("format-list")
-@click.option("-d", "--date", help="Dataset file filled date")
+@click.option("-d", "--input-file-date", help="Input dataset file filled date")
 @click.option("--exclude-not-published", is_flag=True, help="Exclude not published datasets")
 @click.option("--exclude-restricted", is_flag=True, help="Exclude restricted datasets")
-def format_list(date, exclude_not_published, exclude_restricted):
+def format_list(input_file_date, exclude_not_published, exclude_restricted):
     """Output datasets list in csv file"""
-    filename = format_filename(filename=f"datasets.json", directory="data", date=date)
+    filename = format_filename(filename=f"datasets.json", directory="data", date=input_file_date)
     with open(filename, "r") as file:
         report = []
         data = json.load(file)
