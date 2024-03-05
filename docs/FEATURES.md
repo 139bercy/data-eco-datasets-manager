@@ -19,6 +19,10 @@ Les fichiers comprenant test dans le jeu de données ou le `dataset_id`
 - Doivent être préfixés `test-*`
 - Doivent être en accès restreint
 
+## TODOS
+
+TODO: Rationaliser la gestion des noms de fichier (I/O) sur l'ensemble de l'application. 
+
 ## Ideas
 
 Fonctionnalités : 

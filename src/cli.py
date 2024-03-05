@@ -3,6 +3,7 @@ import os.path
 
 import click
 
+from common import format_filename
 from core.configuration import RAW_DATASETS_PATH, DOMAIN_NAME
 from core.output import export, format_dataset_report, csv_format_datasets_list
 
@@ -34,16 +35,26 @@ def dataset():
 
 
 @dataset.command("format-list")
-def format_list():
+@click.option("-d", "--date", help="Dataset file filled date")
+@click.option("--exclude-not-published", is_flag=True, help="Exclude not published datasets")
+@click.option("--exclude-restricted", is_flag=True, help="Exclude restricted datasets")
+def format_list(date, exclude_not_published, exclude_restricted):
     """Output datasets list in csv file"""
-    with open(RAW_DATASETS_PATH, "r") as file:
+    filename = format_filename(filename=f"datasets.json", directory="data", date=date)
+    with open(filename, "r") as file:
         report = []
         data = json.load(file)
         datasets = data["results"]
+    if exclude_not_published:
+        datasets = [d for d in datasets if d["is_published"] is True]
+    if exclude_restricted:
+        datasets = [d for d in datasets if d["is_restricted"] is False]
     for dataset in datasets:
         dataset_report = format_dataset_report(dataset=dataset)
         report.append(dataset_report)
-    csv_format_datasets_list(report)
+    output_opts = f"{'-published' if exclude_not_published else ''}{'-not-restricted' if exclude_restricted else ''}"
+    output = format_filename(f"datasets{output_opts}.csv", "data")
+    csv_format_datasets_list(report, output)
 
 
 @dataset.command("check-quality")

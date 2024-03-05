@@ -16,3 +16,10 @@ def test_format_filename():
     path = format_filename(filename="datasets.json", directory=".")
     # Assert
     assert path == "./2024-01-01-datasets.json"
+
+
+def test_format_filename_with_raw_date():
+    # Act
+    path = format_filename(filename="datasets.json", directory=".", date="2024-01-01")
+    # Assert
+    assert path == "./2024-01-01-datasets.json"
