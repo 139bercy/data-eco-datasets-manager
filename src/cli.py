@@ -5,9 +5,9 @@ import click
 
 from common import format_filename
 from core.configuration import RAW_DATASETS_PATH, DOMAIN_NAME
-from core.output import export, format_dataset_report, csv_format_datasets_list
+from core.output import export, csv_format_datasets_list
 
-from adapters.api import get_dataset_from_api, get_dataset_from_file, query_ods
+from adapters.api import get_dataset_from_api, get_dataset_from_file, query_ods, automation_api_dataset_dto
 from adapters.secondaries import create_table, import_quality_report
 from quality import get_dataset_quality_score
 
@@ -17,29 +17,24 @@ def cli():
     """Application CLI"""
 
 
-@cli.group("api")
-def api():
-    """Fetch data from ODS API"""
-
-
-@api.command("get-datasets")
-def get_datasets():
-    """Retrieve datasets"""
-    response = query_ods(url=f"{DOMAIN_NAME}/api/automation/v1.0/datasets/", params={"limit": 1000})
-    export(response=response, filename=RAW_DATASETS_PATH)
-
-
-@cli.group("dataset")
+@cli.group("datasets")
 def dataset():
     """Dataset management"""
 
 
-@dataset.command("format-list")
+@dataset.command("download")
+def download():
+    """Retrieve datasets from ODS Automation API"""
+    response = query_ods(url=f"{DOMAIN_NAME}/api/automation/v1.0/datasets/", params={"limit": 1000})
+    export(response=response, filename=RAW_DATASETS_PATH)
+
+
+@dataset.command("export")
 @click.option("-d", "--input-file-date", help="Input dataset file filled date")
 @click.option("--exclude-not-published", is_flag=True, help="Exclude not published datasets")
 @click.option("--exclude-restricted", is_flag=True, help="Exclude restricted datasets")
-def format_list(input_file_date, exclude_not_published, exclude_restricted):
-    """Output datasets list in csv file"""
+def export(input_file_date, exclude_not_published, exclude_restricted):
+    """Export datasets list in csv file"""
     filename = format_filename(filename=f"datasets.json", directory="data", date=input_file_date)
     with open(filename, "r") as file:
         report = []
@@ -50,7 +45,7 @@ def format_list(input_file_date, exclude_not_published, exclude_restricted):
     if exclude_restricted:
         datasets = [d for d in datasets if d["is_restricted"] is False]
     for dataset in datasets:
-        dataset_report = format_dataset_report(dataset=dataset)
+        dataset_report = automation_api_dataset_dto(dataset=dataset)
         report.append(dataset_report)
     output_opts = f"{'-published' if exclude_not_published else ''}{'-not-restricted' if exclude_restricted else ''}"
     output = format_filename(f"datasets{output_opts}.csv", "data")

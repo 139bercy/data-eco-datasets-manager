@@ -29,3 +29,16 @@ def get_dataset_from_file():
     with open("data/dataset-sample.json", "r") as file:
         data = json.load(file)
         return data
+
+
+def automation_api_dataset_dto(dataset: dict):
+    dataset_report = {
+        "created": dataset["created_at"],
+        "updated": dataset["updated_at"],
+        "dataset_id": dataset["dataset_id"],
+        "title": dataset.get("metadata", {}).get("default", {}).get("title", {}).get("value", None),
+        "publisher": dataset.get("metadata", {}).get("default", {}).get("publisher", {}).get("value", "Non renseigné"),
+        "published": dataset["is_published"],
+        "restricted": dataset["is_restricted"],
+    }
+    return dataset_report

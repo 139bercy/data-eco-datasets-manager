@@ -24,13 +24,13 @@ La requête étant un peu lourde, il peut être pertinent d'utiliser le fichier 
 des traitements réguliers.
 
 ```
-$ cli api get-datasets
+$ cli datasets download
 ```
 
 ### Formater un output propre en csv
 
 ```
-$ cli dataset format-list --exclude-not-published --exclude-restricted --input-file-date "2024-01-01"
+$ cli datasets export --exclude-not-published --exclude-restricted --input-file-date "2024-01-01"
 ```
 
 ## Générer un rapport qualité

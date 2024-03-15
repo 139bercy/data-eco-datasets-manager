@@ -27,17 +27,4 @@ def csv_format_datasets_list(report: list, filename=FORMATTED_DATASETS_LIST):
         writer = csv.DictWriter(f=output, fieldnames=headers, delimiter=";")
         writer.writeheader()
         writer.writerows(report)
-    print(f"{FORMATTED_DATASETS_LIST} has been upserted.")
-
-
-def format_dataset_report(dataset: dict):
-    dataset_report = {
-        "created": dataset["created_at"],
-        "updated": dataset["updated_at"],
-        "dataset_id": dataset["dataset_id"],
-        "title": dataset.get("metadata", {}).get("default", {}).get("title", {}).get("value", None),
-        "publisher": dataset.get("metadata", {}).get("default", {}).get("publisher", {}).get("value", "Non renseigné"),
-        "published": dataset["is_published"],
-        "restricted": dataset["is_restricted"],
-    }
-    return dataset_report
+    print(f"{FORMATTED_DATASETS_LIST} has been created.")
