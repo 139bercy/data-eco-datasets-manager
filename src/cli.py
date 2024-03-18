@@ -68,6 +68,13 @@ def check_dataset_quality(name, output, no_dcat, source):
     get_dataset_quality_score(data=data, dcat=False if no_dcat else True, pprint=True)
 
 
+@dataset.command("get-details")
+@click.argument("name")
+def get_details(name):
+    """Export dedicated dataset details"""
+    get_dataset_from_api(name, True)
+
+
 @cli.group("database")
 def database():
     """Manage sqlite3 database"""
