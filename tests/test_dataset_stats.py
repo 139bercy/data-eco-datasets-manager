@@ -4,11 +4,13 @@ import pytest
 
 from adapters.usecases import create_dataset, enrich_dataset
 from adapters.exceptions import DatasetInconsistencyError
+from infrastructure.repositories import InMemoryDatasetRepository
 
 
 def test_get_records_count(dataset_fixture):
     # Arrange
-    base_dataset = create_dataset(**dataset_fixture)
+    repository = InMemoryDatasetRepository([])
+    base_dataset = create_dataset(repository=repository, values=dataset_fixture)
     with open("tests/fixtures/dataset-sample-explore.json") as fixture:
         input = json.load(fixture)
         new_dataset = input["results"][0]
@@ -21,7 +23,8 @@ def test_get_records_count(dataset_fixture):
 
 def test_enrich_dataset_names_should_be_consistent(dataset_fixture):
     # Arrange
-    base_dataset = create_dataset(**dataset_fixture)
+    repository = InMemoryDatasetRepository([])
+    base_dataset = create_dataset(repository=repository, values=dataset_fixture)
     with open("tests/fixtures/dataset-sample-explore.json") as fixture:
         input = json.load(fixture)
         new_dataset = input["results"][0]

@@ -26,6 +26,9 @@ class DatasetCsvRepository(AbstractDatasetRepository):
             reader = csv.DictReader(file)
             return next((row for row in reader if row["dataset_id"] == dataset_id), None)
 
+    def add(self, dataset):
+        raise NotImplementedError
+
 
 class DatasetApiRepository(AbstractDatasetRepository):
     def get_all(self):
@@ -34,3 +37,6 @@ class DatasetApiRepository(AbstractDatasetRepository):
 
     def get_one(self, dataset_id):
         return get_dataset_from_api(dataset_id, False)
+
+    def add(self, dataset):
+        raise NotImplementedError

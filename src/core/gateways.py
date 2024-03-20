@@ -9,3 +9,7 @@ class AbstractDatasetRepository(abc.ABC):  # pragma: no cover
     @abc.abstractmethod
     def get_one(self, dataset_id: str):
         pass
+
+    @abc.abstractmethod
+    def add(self, dataset):
+        pass

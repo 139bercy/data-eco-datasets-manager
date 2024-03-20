@@ -1,9 +1,9 @@
 import requests_mock
 
+from adapters.primaries import DatasetCsvRepository, DatasetApiRepository
 from adapters.usecases import create_dataset
 from core.configuration import DOMAIN_NAME
-from adapters.primaries import DatasetCsvRepository, DatasetApiRepository
-from core.models import Dataset
+from infrastructure.repositories import InMemoryDatasetRepository
 
 
 def test_should_retrieve_a_list_of_datasets_from_csv():
@@ -51,3 +51,12 @@ def test_should_retrieve_one_dataset_from_api():
         datasets = repository.get_one("test-dataset-1")
     # Assert
     assert datasets["total_count"] == 1
+
+
+def test_create_dataset(dataset_fixture):
+    # Arrange
+    repository = InMemoryDatasetRepository([])
+    # Act
+    dataset = create_dataset(repository=repository, values=dataset_fixture)
+    # Assert
+    assert dataset.dataset_id == "my-dataset"

@@ -7,3 +7,4 @@ python-dotenv==1.0.0
 requests==2.31.0
 setuptools~=60.2.0
 freezegun~=1.4.0
+tinydb==4.8.0
