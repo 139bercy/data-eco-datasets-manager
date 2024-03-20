@@ -19,9 +19,19 @@ Les fichiers comprenant test dans le jeu de données ou le `dataset_id`
 - Doivent être préfixés `test-*`
 - Doivent être en accès restreint
 
+## Données supplémentaires
+
+metas > default > records_count
+metas > processing > records_size
+metas > explore > reuse_count
+metas > explore > download_count
+metas > explore > api_call_count
+metas > explore > popularity_score
+
 ## TODOS
 
 TODO: Rationaliser la gestion des noms de fichier (I/O) sur l'ensemble de l'application. 
+TODO: Ne pas prendre en compte les jeux de données non mis à jour depuis le dernier passage 
 
 ## Ideas
 

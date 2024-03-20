@@ -16,7 +16,7 @@ def query_ods(url: str, params: dict):
         raise HTTPError
 
 
-def get_dataset_from_api(name, output):
+def get_dataset_from_api(name: str, output: bool):
     url = f"{DOMAIN_NAME}/api/explore/v2.1/catalog/datasets/"
     params = {"where": f"dataset_id='{name}'", "include_app_metas": True}
     response = query_ods(url=url, params=params)
@@ -40,5 +40,12 @@ def automation_api_dataset_dto(dataset: dict):
         "publisher": dataset.get("metadata", {}).get("default", {}).get("publisher", {}).get("value", "Non renseigné"),
         "published": dataset["is_published"],
         "restricted": dataset["is_restricted"],
+    }
+    return dataset_report
+
+
+def explore_api_dataset_dto(dataset: dict):
+    dataset_report = {
+        "download_count": dataset["metas"]["explore"]["download_count"]
     }
     return dataset_report

@@ -1,7 +1,9 @@
 import requests_mock
 
+from adapters.usecases import create_dataset
 from core.configuration import DOMAIN_NAME
 from adapters.primaries import DatasetCsvRepository, DatasetApiRepository
+from core.models import Dataset
 
 
 def test_should_retrieve_a_list_of_datasets_from_csv():
