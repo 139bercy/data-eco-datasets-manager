@@ -1,5 +1,4 @@
 import json
-import os.path
 
 import click
 
@@ -8,7 +7,6 @@ from core.configuration import RAW_DATASETS_PATH, DOMAIN_NAME
 from core.output import export, csv_format_datasets_list
 
 from adapters.api import get_dataset_from_api, get_dataset_from_file, query_ods, automation_api_dataset_dto
-from adapters.secondaries import create_table, import_quality_report
 from quality import get_dataset_quality_score
 
 
@@ -76,25 +74,3 @@ def check_dataset_quality(name, output, no_dcat, source):
 def get_details(name):
     """Export dedicated dataset details"""
     get_dataset_from_api(name, True)
-
-
-@cli.group("database")
-def database():
-    """Manage sqlite3 database"""
-
-
-@database.command("create")
-def create_database():
-    if os.path.exists("database.sqlite"):
-        print("Database already exists")
-        return
-    create_table()
-
-
-@database.command("import")
-@click.option("-r", "--report", type=click.Choice(["quality"]), help="Report name")
-def database_import(report):
-    if report == "quality":
-        import_quality_report()
-        return
-    print("ERROR: Fill report category name")
