@@ -53,18 +53,21 @@ def export(input_file_date, exclude_not_published, exclude_restricted):
 
 
 @dataset.command("check-quality")
-@click.option("-n", "--name", help="Dataset name")
+@click.option("-n", "--name", help="Dataset name", required=False)
 @click.option("-o", "--output", is_flag=True, help="File name if request needs to be exported to json")
 @click.option("--no-dcat", is_flag=True, help="Take out DCAT from score calculation")
-@click.option("-s", "--source", type=click.Choice(["api", "file"]), default="file", help="Source")
+@click.option("-s", "--source", type=click.Choice(["api", "file"]), required=True, default="file", help="Source")
 def check_dataset_quality(name, output, no_dcat, source):
     """Check dedicated dataset quality"""
     data = {}
-    if source == "api":
+    if source == "api" and name is None:
+        print("Dataset name is required\nAdd -n <dataset-name> to the command options")
+        return
+    if source == "api" and name is not None:
         data = get_dataset_from_api(name, output)
     elif source == "file":
         data = get_dataset_from_file()
-    print(f'Dataset: {data["results"][0]["dataset_id"]}')
+    print(f'Source: \t{source}\nDataset: \t{data["results"][0]["dataset_id"]}')
     get_dataset_quality_score(data=data, dcat=False if no_dcat else True, pprint=True)
 
 
