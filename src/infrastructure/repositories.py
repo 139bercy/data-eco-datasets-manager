@@ -3,6 +3,7 @@ import os
 from tinydb import TinyDB
 
 from core.gateways import AbstractDatasetRepository
+from infrastructure.exceptions import DatabaseDeletionError
 
 
 class InMemoryDatasetRepository(AbstractDatasetRepository):
@@ -20,8 +21,9 @@ class InMemoryDatasetRepository(AbstractDatasetRepository):
 
 
 class TinyDbDatasetRepository(AbstractDatasetRepository):
-    def __init__(self):
-        self.db = TinyDB('db-test.json', indent=2)
+    def __init__(self, name):
+        self.name = name
+        self.db = TinyDB(name, indent=2)
 
     def get_all(self):
         raise NotImplementedError
@@ -33,4 +35,7 @@ class TinyDbDatasetRepository(AbstractDatasetRepository):
         self.db.insert(dataset.__dict__)
 
     def clean(self):
-        os.remove("db-test.json")
+        if os.environ["APP_ENV"] == "test":
+            os.remove(self.name)
+        else:
+            raise DatabaseDeletionError

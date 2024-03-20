@@ -1,4 +1,9 @@
+import os
+
 import pytest
+
+
+os.environ["APP_ENV"] = "test"
 
 
 @pytest.fixture
@@ -14,3 +19,6 @@ def dataset_fixture():
     }
 
 
+@pytest.fixture
+def tiny_db_name():
+    return "db-test.json"
