@@ -1,4 +1,4 @@
-# ODS API
+# Data Eco Datasets Manager
 
 Outil de monitoring et de pilotage pour la plateforme Data Economie.
 
