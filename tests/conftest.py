@@ -2,6 +2,7 @@ import os
 
 import pytest
 
+from infrastructure.repositories import TinyDbDatasetRepository
 
 os.environ["APP_ENV"] = "test"
 
@@ -20,5 +21,16 @@ def dataset_fixture():
 
 
 @pytest.fixture
-def tiny_db_name():
-    return "db-test.json"
+def dataset_update_fixture():
+    return {
+        "dataset_id": "my-dataset",
+        "metas": {
+            "explore": {"download_count": 100, "api_call_count": 1000, "popularity_score": 4.2},
+            "processing": {"records_size": 123456},
+        },
+    }
+
+
+@pytest.fixture
+def tiny_db_repository():
+    return TinyDbDatasetRepository(name="db-test.json")

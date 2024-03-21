@@ -1,7 +1,7 @@
 import requests_mock
 
 from adapters.primaries import DatasetCsvRepository, DatasetApiRepository
-from adapters.usecases import create_dataset
+from adapters.usecases import create_dataset, enrich_dataset
 from core.configuration import DOMAIN_NAME
 from infrastructure.repositories import InMemoryDatasetRepository
 
@@ -60,3 +60,15 @@ def test_create_dataset(dataset_fixture):
     dataset = create_dataset(repository=repository, values=dataset_fixture)
     # Assert
     assert dataset.dataset_id == "my-dataset"
+
+
+def test_update_dataset(dataset_fixture, dataset_update_fixture):
+    # Arrange
+    repository = InMemoryDatasetRepository([])
+    # Act
+    dataset = create_dataset(repository=repository, values=dataset_fixture)
+    # Act
+    enrich_dataset(repository=repository, dataset=dataset, new_dataset=dataset_update_fixture)
+    # Assert
+    assert dataset.dataset_id == "my-dataset"
+    assert dataset.download_count == 100

@@ -57,11 +57,11 @@
         },
         "explore": {
           "reuse_count": 0,
-          "download_count": 105,
+          "download_count": 100,
           "attachment_download_count": 0,
           "file_field_download_count": 0,
-          "api_call_count": 11824,
-          "popularity_score": 4.1,
+          "api_call_count": 1000,
+          "popularity_score": 4.2,
           "feed_titlefield": null,
           "feed_descriptionfield": null,
           "feed_fieldslist": null,
@@ -73,7 +73,7 @@
         "processing": {
           "processing_modified": "2024-02-20T16:27:31.874000+00:00",
           "security_last_modified": "2024-02-29T09:38:36.319000+00:00",
-          "records_size": 678638419,
+          "records_size": 123456,
           "complete": true
         },
         "publishing": {

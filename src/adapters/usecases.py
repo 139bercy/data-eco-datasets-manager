@@ -11,10 +11,11 @@ def create_dataset(repository, values) -> Dataset:
     return dataset
 
 
-def enrich_dataset(dataset: Dataset, new_dataset: dict) -> Dataset:
-    dto = explore_api_dataset_dto(new_dataset)
+def enrich_dataset(repository, dataset: Dataset, new_dataset: dict) -> Dataset:
+    dto = explore_api_dataset_dto(**new_dataset)
     if dataset.dataset_id != new_dataset["dataset_id"]:
         raise DatasetInconsistencyError
     dataset_copy = copy.deepcopy(dataset)
-    dataset_copy.update(**{"download_count": dto["download_count"]})
+    dataset_copy.update(**dto)
+    repository.update(dataset.dataset_id, dto)
     return dataset_copy

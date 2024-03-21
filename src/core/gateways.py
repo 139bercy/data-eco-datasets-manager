@@ -4,12 +4,16 @@ import abc
 class AbstractDatasetRepository(abc.ABC):  # pragma: no cover
     @abc.abstractmethod
     def get_all(self):
-        pass
+        raise NotImplementedError
 
     @abc.abstractmethod
     def get_one(self, dataset_id: str):
-        pass
+        raise NotImplementedError
 
     @abc.abstractmethod
     def add(self, dataset):
-        pass
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def update(self, dataset_id: str, values: dict) -> None:
+        raise NotImplementedError

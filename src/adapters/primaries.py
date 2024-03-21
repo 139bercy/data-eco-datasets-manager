@@ -29,6 +29,9 @@ class DatasetCsvRepository(AbstractDatasetRepository):
     def add(self, dataset):
         raise NotImplementedError
 
+    def update(self, dataset_id: str, values: dict) -> None:
+        raise NotImplementedError
+
 
 class DatasetApiRepository(AbstractDatasetRepository):
     def get_all(self):
@@ -39,4 +42,7 @@ class DatasetApiRepository(AbstractDatasetRepository):
         return get_dataset_from_api(dataset_id, False)
 
     def add(self, dataset):
+        raise NotImplementedError
+
+    def update(self, dataset_id: str, values: dict) -> None:
         raise NotImplementedError
