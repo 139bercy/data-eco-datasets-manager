@@ -1,6 +1,9 @@
 install:
 	python setup.py install
 
+format:
+	black src tests scripts
+
 clean_tests:
 	rm -rf .pytest_cache htmlcov .coverage
 

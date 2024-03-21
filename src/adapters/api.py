@@ -46,9 +46,10 @@ def automation_api_dataset_dto(dataset: dict):
 
 def explore_api_dataset_dto(dataset: dict):
     dataset_report = {
-        "download_count": dataset.get("metas", {}).get("explore", {}).get("download_count", "N/A"),
-        "api_call_count": dataset.get("metas", {}).get("explore", {}).get("api_call_count", "N/A"),
-        "popularity_score": dataset.get("metas", {}).get("explore", {}).get("popularity_score", "N/A"),
-        "records_size": dataset.get("metas", {}).get("processing", {}).get("records_size", "N/A"),
+        "download_count": dataset.get("metas", {}).get("explore", {}).get("download_count", None),
+        "api_call_count": dataset.get("metas", {}).get("explore", {}).get("api_call_count", None),
+        "popularity_score": dataset.get("metas", {}).get("explore", {}).get("popularity_score", None),
+        "records_size": dataset.get("metas", {}).get("processing", {}).get("records_size", None),
+        "records_count": dataset.get("metas", {}).get("default", {}).get("records_count", None),
     }
     return dataset_report

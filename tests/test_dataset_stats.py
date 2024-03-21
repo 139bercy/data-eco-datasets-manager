@@ -23,6 +23,7 @@ def test_should_add_data_to_existing_dataset(dataset_fixture):
     assert dataset.api_call_count == 1000
     assert dataset.popularity_score == 4.2
     assert dataset.records_size == 123456
+    assert dataset.records_count == 400
 
 
 def test_enrich_dataset_names_should_be_consistent(dataset_fixture):
@@ -40,7 +41,13 @@ def test_enrich_dataset_names_should_be_consistent(dataset_fixture):
 
 def test_explore_empty_values_should_return_none():
     # Arrange
-    expected = {"api_call_count": "N/A", "download_count": "N/A", "popularity_score": "N/A", "records_size": "N/A"}
+    expected = {
+        "api_call_count": None,
+        "download_count": None,
+        "popularity_score": None,
+        "records_size": None,
+        "records_count": None,
+    }
     # Act
     result = explore_api_dataset_dto({})
     # Assert
