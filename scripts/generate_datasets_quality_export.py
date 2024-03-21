@@ -1,14 +1,17 @@
 import csv
 import time
 
-from adapters.api import query_ods
+from adapters.api import query_ods, explore_api_dataset_dto
+from adapters.usecases import create_dataset
 from common import format_filename
 from core.configuration import FORMATTED_DATASETS_LIST, DOMAIN_NAME
+from infrastructure.repositories import TinyDbDatasetRepository
 from quality import get_dataset_quality_score
-
+from stats import get_dataset_stats_report
 
 URL = f"{DOMAIN_NAME}/api/explore/v2.1/catalog/datasets/"
 DCAT = False
+REPOSITORY = TinyDbDatasetRepository(name="db.json")
 
 
 def get_datasets():
@@ -31,6 +34,10 @@ with open(f"data/{filename}", "w") as report_file:
         "publisher",
         "published",
         "restricted",
+        "download_count",
+        "records_size",
+        "api_call_count",
+        "popularity_score",
         "description_score",
         "default_score",
         "dcat_score",
@@ -44,7 +51,9 @@ with open(f"data/{filename}", "w") as report_file:
         params = {"where": f"dataset_id='{ds_id}'", "include_app_metas": True}
 
         data = query_ods(url=URL, params=params)
+        stats_report = get_dataset_stats_report(data=data, pprint=True)
         ds_report = get_dataset_quality_score(data=data, dcat=DCAT, pprint=True)
-
-        writer.writerow({**ds, **ds_report})
+        dataset = {**ds, **stats_report, **ds_report}
+        create_dataset(repository=REPOSITORY, values=dataset)
+        writer.writerow(dataset)
         time.sleep(0.5)

@@ -12,7 +12,7 @@ def create_dataset(repository, values) -> Dataset:
 
 
 def enrich_dataset(repository, dataset: Dataset, new_dataset: dict) -> Dataset:
-    dto = explore_api_dataset_dto(**new_dataset)
+    dto = explore_api_dataset_dto(new_dataset)
     if dataset.dataset_id != new_dataset["dataset_id"]:
         raise DatasetInconsistencyError
     dataset_copy = copy.deepcopy(dataset)

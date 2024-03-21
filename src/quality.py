@@ -14,7 +14,7 @@ def get_report(data: dict, dcat: bool):
     if dcat:
         dcat = get_metadata_quality_score(dataset=data, name="dcat", pprint=False)
     else:
-        dcat = {"score": "N/A"}
+        dcat = {"score": None}
     total = get_global_quality_score([description["score"], default["score"], dcat["score"]])
     report = {
         "description_score": description["score"],
@@ -33,10 +33,10 @@ def get_global_quality_score(metrics):
 
 def handle_no_dataset_case():
     report = {
-        "description_score": "N/A",
-        "default_score": "N/A",
-        "dcat_score": "N/A",
-        "quality_score": "N/A",
+        "description_score": None,
+        "default_score": None,
+        "dcat_score": None,
+        "quality_score": None,
     }
     return report
 
@@ -82,7 +82,7 @@ def calculate_quality_score(total: int, count: int) -> float or str:
         result = int(round((count / total) * 100))
         return result
     except ZeroDivisionError:
-        return "N/A"
+        return None
 
 
 def count_metadata_field(metadata):

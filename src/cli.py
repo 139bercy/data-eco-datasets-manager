@@ -1,12 +1,22 @@
+import csv
 import json
+import os
 
 import click
 
+from adapters.usecases import create_dataset
 from common import format_filename
 from core.configuration import RAW_DATASETS_PATH, DOMAIN_NAME
 from core.output import export, csv_format_datasets_list
 
-from adapters.api import get_dataset_from_api, get_dataset_from_file, query_ods, automation_api_dataset_dto
+from adapters.api import (
+    get_dataset_from_api,
+    get_dataset_from_file,
+    query_ods,
+    automation_api_dataset_dto,
+    explore_api_dataset_dto,
+)
+from infrastructure.repositories import TinyDbDatasetRepository
 from quality import get_dataset_quality_score
 
 
@@ -31,7 +41,7 @@ def download():
 @click.option("-d", "--input-file-date", help="Input dataset file filled date")
 @click.option("--exclude-not-published", is_flag=True, help="Exclude not published datasets")
 @click.option("--exclude-restricted", is_flag=True, help="Exclude restricted datasets")
-def export(input_file_date, exclude_not_published, exclude_restricted):
+def export_to_csv(input_file_date, exclude_not_published, exclude_restricted):
     """Export datasets list in csv file"""
     filename = format_filename(filename=f"datasets.json", directory="data", date=input_file_date)
     with open(filename, "r") as file:
@@ -74,3 +84,26 @@ def check_dataset_quality(name, output, no_dcat, source):
 def get_details(name):
     """Export dedicated dataset details"""
     get_dataset_from_api(name, True)
+
+
+@cli.group("database")
+def database():
+    """Database management"""
+
+
+@database.command("import")
+@click.option("-d", "--input-file-date", help="Input dataset file filled date")
+def import_data(input_file_date):
+    # os.remove("db.json")
+    repository = TinyDbDatasetRepository(name="db.json")
+    filename = format_filename(filename=f"datasets-quality-report.csv", directory="data", date=input_file_date)
+    with open(filename, "r") as file:
+        data = csv.DictReader(file, delimiter=";")
+        data = [r for r in data]
+        for dataset in data:
+            print(dataset)
+            print(type(dataset["download_count"]))
+            create_dataset(repository=repository, values=dataset)
+    # output_opts = f"{'-published' if exclude_not_published else ''}{'-not-restricted' if exclude_restricted else ''}"
+    # output = format_filename(f"datasets{output_opts}.csv", "data")
+    # csv_format_datasets_list(report, output)

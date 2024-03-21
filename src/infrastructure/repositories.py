@@ -32,7 +32,7 @@ class InMemoryDatasetRepository(AbstractDatasetRepository):
 class TinyDbDatasetRepository(AbstractDatasetRepository):
     def __init__(self, name):
         self.name = name
-        self.db = TinyDB(name, indent=2)
+        self.db = TinyDB(name, indent=2, ensure_ascii=False)
 
     def get_all(self):
         raise NotImplementedError

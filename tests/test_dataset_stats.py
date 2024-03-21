@@ -2,6 +2,7 @@ import json
 
 import pytest
 
+from adapters.api import explore_api_dataset_dto
 from adapters.usecases import create_dataset, enrich_dataset
 from adapters.exceptions import DatasetInconsistencyError
 from infrastructure.repositories import InMemoryDatasetRepository
@@ -35,3 +36,12 @@ def test_enrich_dataset_names_should_be_consistent(dataset_fixture):
     # Act & Assert
     with pytest.raises(DatasetInconsistencyError):
         enrich_dataset(repository=repository, dataset=base_dataset, new_dataset=new_dataset)
+
+
+def test_explore_empty_values_should_return_none():
+    # Arrange
+    expected = {"api_call_count": "N/A", "download_count": "N/A", "popularity_score": "N/A", "records_size": "N/A"}
+    # Act
+    result = explore_api_dataset_dto({})
+    # Assert
+    assert result == expected

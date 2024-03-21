@@ -44,11 +44,11 @@ def automation_api_dataset_dto(dataset: dict):
     return dataset_report
 
 
-def explore_api_dataset_dto(**kwargs):
+def explore_api_dataset_dto(dataset: dict):
     dataset_report = {
-        "download_count": kwargs["metas"]["explore"]["download_count"],
-        "api_call_count": kwargs["metas"]["explore"]["api_call_count"],
-        "popularity_score": kwargs["metas"]["explore"]["popularity_score"],
-        "records_size": kwargs["metas"]["processing"]["records_size"],
+        "download_count": dataset.get("metas", {}).get("explore", {}).get("download_count", "N/A"),
+        "api_call_count": dataset.get("metas", {}).get("explore", {}).get("api_call_count", "N/A"),
+        "popularity_score": dataset.get("metas", {}).get("explore", {}).get("popularity_score", "N/A"),
+        "records_size": dataset.get("metas", {}).get("processing", {}).get("records_size", "N/A"),
     }
     return dataset_report

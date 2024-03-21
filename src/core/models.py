@@ -15,6 +15,11 @@ class Dataset:
         api_call_count: int = None,
         popularity_score: float = None,
         records_size: int = None,
+        records_count: int = None,
+        description_score: float = None,
+        default_score: float = None,
+        dcat_score: float = None,
+        quality_score: float = None,
     ):
         self.created = created
         self.updated = updated
@@ -27,6 +32,11 @@ class Dataset:
         self.api_call_count = api_call_count
         self.popularity_score = popularity_score
         self.records_size = records_size
+        self.records_count = records_count
+        self.description_score = description_score
+        self.default_score = default_score
+        self.dcat_score = dcat_score
+        self.quality_score = quality_score
 
     @classmethod
     def create(cls, *args, **kwargs):
