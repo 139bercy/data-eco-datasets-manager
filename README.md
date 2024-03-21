@@ -18,7 +18,7 @@ $ pip setup.py install
 
 ## Usage
 
-### Télécharger la liste des datasets
+**Télécharger la liste des datasets**
 
 La requête étant un peu lourde, il peut être pertinent d'utiliser le fichier `data/datasets.json` comme source pour 
 des traitements réguliers.
@@ -27,21 +27,33 @@ des traitements réguliers.
 $ cli datasets download
 ```
 
-### Formater un output propre en csv
+**Formater un output propre en csv**
 
 ```
 $ cli datasets export --exclude-not-published --exclude-restricted --input-file-date "2024-01-01"
 ```
 
-## Générer un rapport qualité
+**Générer un rapport qualité**
 
 ```
 $ python scripts/generate_datasets_quality_export.py
 ```
 
-Pour vérifier le score d'un jeu de données : 
+**Pour vérifier le score d'un jeu de données**
 
 ```
 $ cli dataset check-quality -s api -n <dataset_id> --no-dcat
+```
+
+**Exporter les données brutes d'une requête API pour un jeu de données**
+
+```
+$ ➜ cli datasets get-details <dataset_id>
+```
+
+**Requêter la base de données locale**
+
+```
+$ cli database get <dataset_id>
 ```
 

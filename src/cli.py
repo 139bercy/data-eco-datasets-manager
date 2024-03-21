@@ -91,19 +91,11 @@ def database():
     """Database management"""
 
 
-@database.command("import")
-@click.option("-d", "--input-file-date", help="Input dataset file filled date")
-def import_data(input_file_date):
-    # os.remove("db.json")
-    repository = TinyDbDatasetRepository(name="db.json")
-    filename = format_filename(filename=f"datasets-quality-report.csv", directory="data", date=input_file_date)
-    with open(filename, "r") as file:
-        data = csv.DictReader(file, delimiter=";")
-        data = [r for r in data]
-        for dataset in data:
-            print(dataset)
-            print(type(dataset["download_count"]))
-            create_dataset(repository=repository, values=dataset)
-    # output_opts = f"{'-published' if exclude_not_published else ''}{'-not-restricted' if exclude_restricted else ''}"
-    # output = format_filename(f"datasets{output_opts}.csv", "data")
-    # csv_format_datasets_list(report, output)
+@database.command("get")
+@click.argument("name")
+def database_get_dataset(name):
+    """Get intel on one dataset"""
+    repository = TinyDbDatasetRepository("data/db.json")
+    result = repository.get_one(dataset_id=name)
+    formatted = json.dumps(result.__dict__, indent=2, ensure_ascii=False)
+    click.echo(formatted)
