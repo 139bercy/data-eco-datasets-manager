@@ -51,9 +51,14 @@ $ cli dataset check-quality -s api -n <dataset_id> --no-dcat
 $ ➜ cli datasets get-details <dataset_id>
 ```
 
+**Chercher un nom de données**
+
+```
+$ cli db search <substring>
+```
+
 **Requêter la base de données locale**
 
 ```
-$ cli database get <dataset_id>
+$ cli db get <dataset_id>
 ```
-

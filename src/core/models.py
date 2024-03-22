@@ -16,6 +16,7 @@ class Dataset:
         api_call_count: int = None,
         popularity_score: float = None,
         records_size: int = None,
+        size: str = None,
         records_count: int = None,
         description_score: float = None,
         default_score: float = None,
@@ -34,6 +35,7 @@ class Dataset:
         self.api_call_count = api_call_count
         self.popularity_score = popularity_score
         self.records_size = records_size
+        self.size = size
         self.records_count = records_count
         self.description_score = description_score
         self.default_score = default_score
@@ -46,12 +48,13 @@ class Dataset:
         return cls(buid=buid, *args, **kwargs)
 
     def update(
-        self, download_count: int, api_call_count: int, popularity_score: float, records_size: int, records_count: int
+        self, download_count: int, api_call_count: int, popularity_score: float, records_size: int, size: str, records_count: int
     ):
         self.download_count = download_count
         self.api_call_count = api_call_count
         self.popularity_score = round(popularity_score, 1)
         self.records_size = records_size
+        self.size = size
         self.records_count = records_count
 
     def __str__(self):

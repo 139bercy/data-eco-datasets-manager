@@ -2,6 +2,7 @@ import json
 
 import requests
 
+from common import make_bytes_size_human_readable
 from core.configuration import HEADERS, DOMAIN_NAME
 from core.exceptions import HTTPError
 from core.output import response_to_json, export
@@ -45,11 +46,13 @@ def automation_api_dataset_dto(dataset: dict):
 
 
 def explore_api_dataset_dto(dataset: dict):
+    records_size = dataset.get("metas", {}).get("processing", {}).get("records_size", None)
     dataset_report = {
         "download_count": dataset.get("metas", {}).get("explore", {}).get("download_count", None),
         "api_call_count": dataset.get("metas", {}).get("explore", {}).get("api_call_count", None),
         "popularity_score": dataset.get("metas", {}).get("explore", {}).get("popularity_score", None),
-        "records_size": dataset.get("metas", {}).get("processing", {}).get("records_size", None),
+        "records_size": records_size,
+        "size": make_bytes_size_human_readable(bytes_size=records_size),
         "records_count": dataset.get("metas", {}).get("default", {}).get("records_count", None),
     }
     return dataset_report

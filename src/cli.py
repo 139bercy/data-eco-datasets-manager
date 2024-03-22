@@ -1,21 +1,16 @@
-import csv
 import json
-import os
 
 import click
-
-from adapters.usecases import create_dataset
-from common import format_filename
-from core.configuration import RAW_DATASETS_PATH, DOMAIN_NAME
-from core.output import export, csv_format_datasets_list
 
 from adapters.api import (
     get_dataset_from_api,
     get_dataset_from_file,
     query_ods,
     automation_api_dataset_dto,
-    explore_api_dataset_dto,
 )
+from common import format_filename, make_bytes_size_human_readable
+from core.configuration import RAW_DATASETS_PATH, DOMAIN_NAME
+from core.output import export, csv_format_datasets_list
 from infrastructure.repositories import TinyDbDatasetRepository
 from quality import get_dataset_quality_score
 
@@ -86,9 +81,18 @@ def get_details(name):
     get_dataset_from_api(name, True)
 
 
-@cli.group("database")
+@cli.group("db")
 def database():
     """Database management"""
+
+
+@database.command("search")
+@click.argument("chain")
+def search(chain):
+    repository = TinyDbDatasetRepository("data/db.json")
+    results = repository.search(chain=chain)
+    for result in results:
+        print(result["dataset_id"])
 
 
 @database.command("get")
@@ -99,3 +103,15 @@ def database_get_dataset(name):
     result = repository.get_one(dataset_id=name)
     formatted = json.dumps(result.__dict__, indent=2, ensure_ascii=False)
     click.echo(formatted)
+
+
+@cli.group("utils")
+def utils():
+    """Standalone helping tools"""
+
+
+@utils.command("convert-size")
+@click.argument("bytes")
+def convert_size(bytes):
+    result = make_bytes_size_human_readable(int(bytes))
+    print(f"{bytes} octets => {result}")

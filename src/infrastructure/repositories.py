@@ -43,6 +43,11 @@ class TinyDbDatasetRepository(AbstractDatasetRepository):
         dataset = Dataset(**result)
         return dataset
 
+    def search(self, chain):
+        query = Query()
+        results = self.db.search(query["dataset_id"].search(chain))
+        return results
+
     def add(self, dataset):
         self.db.insert(dataset.__dict__)
 
