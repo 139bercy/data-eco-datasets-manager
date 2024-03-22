@@ -4,7 +4,7 @@ from tinydb import TinyDB, Query
 
 from core.gateways import AbstractDatasetRepository
 from core.models import Dataset
-from infrastructure.exceptions import DatabaseDeletionError
+from infrastructure.exceptions import DatabaseDeletionError, ExistingRecordError
 
 
 class InMemoryDatasetRepository(AbstractDatasetRepository):
@@ -34,6 +34,13 @@ class TinyDbDatasetRepository(AbstractDatasetRepository):
         self.name = name
         self.db = TinyDB(name, indent=2, ensure_ascii=False)
 
+    def is_unique(self, dataset_id):
+        index = {value["dataset_id"] for value in self.db.all()}
+        result = next((dsid for dsid in index if dsid == dataset_id), None)
+        if result:
+            return False
+        return True
+
     def get_all(self):
         raise NotImplementedError
 
@@ -49,7 +56,10 @@ class TinyDbDatasetRepository(AbstractDatasetRepository):
         return results
 
     def add(self, dataset):
-        self.db.insert(dataset.__dict__)
+        if self.is_unique(dataset_id=dataset.dataset_id):
+            self.db.insert(dataset.__dict__)
+        else:
+            raise ExistingRecordError
 
     def update(self, dataset_id: str, values: dict) -> None:
         query = Query()

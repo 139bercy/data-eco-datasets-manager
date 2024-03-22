@@ -1,5 +1,8 @@
+import pytest
+
 from adapters.usecases import create_dataset, enrich_dataset
 from core.models import Dataset
+from infrastructure.exceptions import ExistingRecordError
 from infrastructure.repositories import InMemoryDatasetRepository, TinyDbDatasetRepository
 
 from tinydb import Query
@@ -31,6 +34,7 @@ def test_get_one_tiny_db_record(dataset_fixture, tiny_db_repository):
     result = tiny_db_repository.get_one(dataset_id="my-dataset")
     # Assert
     assert isinstance(result, Dataset)
+    tiny_db_repository.clean()
 
 
 def test_add_data_to_existing_dataset(dataset_fixture, dataset_update_fixture, tiny_db_repository):
@@ -44,3 +48,13 @@ def test_add_data_to_existing_dataset(dataset_fixture, dataset_update_fixture, t
     assert results[0]["dataset_id"] == "my-dataset"
     assert results[0]["download_count"] == 100
     tiny_db_repository.clean()
+
+
+def test_dataset_id_should_be_unique(dataset_fixture, tiny_db_repository):
+    # Arrange & Act & Assert
+    with pytest.raises(ExistingRecordError):
+        create_dataset(repository=tiny_db_repository, values=dataset_fixture)
+        create_dataset(repository=tiny_db_repository, values=dataset_fixture)
+    # clean
+    tiny_db_repository.clean()
+

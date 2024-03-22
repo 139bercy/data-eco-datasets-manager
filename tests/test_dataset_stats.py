@@ -48,6 +48,7 @@ def test_explore_empty_values_should_return_none():
         "download_count": None,
         "popularity_score": None,
         "records_size": None,
+        "size": None,
         "records_count": None,
     }
     # Act

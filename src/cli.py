@@ -20,7 +20,7 @@ def cli():
     """Application CLI"""
 
 
-@cli.group("datasets")
+@cli.group("dataset")
 def dataset():
     """Dataset management"""
 

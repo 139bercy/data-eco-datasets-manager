@@ -1,7 +1,7 @@
 import csv
 import time
 
-from adapters.api import query_ods, explore_api_dataset_dto
+from adapters.api import query_ods
 from adapters.usecases import create_dataset
 from common import format_filename
 from core.configuration import FORMATTED_DATASETS_LIST, DOMAIN_NAME
@@ -27,6 +27,7 @@ filename = format_filename(filename="datasets-quality-report.csv")
 
 with open(f"data/{filename}", "w") as report_file:
     headers = [
+        "buid",
         "created",
         "updated",
         "dataset_id",
@@ -36,6 +37,7 @@ with open(f"data/{filename}", "w") as report_file:
         "restricted",
         "download_count",
         "records_size",
+        "size",
         "records_count",
         "api_call_count",
         "popularity_score",
@@ -55,6 +57,6 @@ with open(f"data/{filename}", "w") as report_file:
         stats_report = get_dataset_stats_report(data=data, pprint=False)
         ds_report = get_dataset_quality_score(data=data, dcat=DCAT, pprint=False)
         dataset = {**ds[1], **stats_report, **ds_report}
-        create_dataset(repository=REPOSITORY, values=dataset)
-        writer.writerow(dataset)
-        time.sleep(0.5)
+        dataset = create_dataset(repository=REPOSITORY, values=dataset)
+        writer.writerow(dataset.__dict__)
+        time.sleep(0.1)
