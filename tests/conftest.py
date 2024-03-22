@@ -34,4 +34,7 @@ def dataset_update_fixture():
 
 @pytest.fixture
 def tiny_db_repository():
-    return TinyDbDatasetRepository(name="db-test.json")
+    try:
+        return TinyDbDatasetRepository(name="db-test.json")
+    finally:
+        os.remove("db-test.json")

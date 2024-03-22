@@ -5,6 +5,7 @@ from tinydb import TinyDB, Query
 from core.gateways import AbstractDatasetRepository
 from core.models import Dataset
 from infrastructure.exceptions import DatabaseDeletionError, ExistingRecordError
+from infrastructure.builder import TinyDBQueryBuilder
 
 
 class InMemoryDatasetRepository(AbstractDatasetRepository):
@@ -50,10 +51,20 @@ class TinyDbDatasetRepository(AbstractDatasetRepository):
         dataset = Dataset(**result)
         return dataset
 
-    def search(self, chain):
+    def search(self, field, value):
         query = Query()
-        results = self.db.search(query["dataset_id"].search(chain))
-        return results
+        if type(value) == bool:
+            results = self.db.search((getattr(query, field) == value))
+        else:
+            results = self.db.search(query[field].search(value))
+        if len(results) >= 1 :
+            return results
+        return None
+
+    def query(self, query=None):
+        if not query:
+            return self.db.all()
+        return self.db.search(query)
 
     def add(self, dataset):
         if self.is_unique(dataset_id=dataset.dataset_id):

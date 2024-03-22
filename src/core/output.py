@@ -27,4 +27,4 @@ def csv_format_datasets_list(report: list, filename=FORMATTED_DATASETS_LIST):
         writer = csv.DictWriter(f=output, fieldnames=headers, delimiter=";")
         writer.writeheader()
         writer.writerows(report)
-    print(f"{FORMATTED_DATASETS_LIST} has been created.")
+    print(f"{filename} has been created.")

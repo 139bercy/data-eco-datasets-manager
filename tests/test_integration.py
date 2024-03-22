@@ -24,7 +24,6 @@ def test_add_base_dataset_to_tinydb_repository(dataset_fixture, tiny_db_reposito
     query = Query()
     results = tiny_db_repository.db.search(query.dataset_id == "my-dataset")
     assert results[0]["dataset_id"] == "my-dataset"
-    tiny_db_repository.clean()
 
 
 def test_get_one_tiny_db_record(dataset_fixture, tiny_db_repository):
@@ -34,7 +33,6 @@ def test_get_one_tiny_db_record(dataset_fixture, tiny_db_repository):
     result = tiny_db_repository.get_one(dataset_id="my-dataset")
     # Assert
     assert isinstance(result, Dataset)
-    tiny_db_repository.clean()
 
 
 def test_add_data_to_existing_dataset(dataset_fixture, dataset_update_fixture, tiny_db_repository):
@@ -47,7 +45,24 @@ def test_add_data_to_existing_dataset(dataset_fixture, dataset_update_fixture, t
     results = tiny_db_repository.db.search(query.dataset_id == "my-dataset")
     assert results[0]["dataset_id"] == "my-dataset"
     assert results[0]["download_count"] == 100
-    tiny_db_repository.clean()
+
+
+def test_search_bool_in_database(dataset_fixture, tiny_db_repository):
+    # Arrange
+    create_dataset(tiny_db_repository, dataset_fixture)
+    # Act
+    results = tiny_db_repository.search("published", True)
+    # Assert
+    assert results is not None
+
+
+def test_search_string_in_database(dataset_fixture, tiny_db_repository):
+    # Arrange
+    create_dataset(tiny_db_repository, dataset_fixture)
+    # Act
+    results = tiny_db_repository.search("dataset_id", "my-dataset")
+    # Assert
+    assert results is not None
 
 
 def test_dataset_id_should_be_unique(dataset_fixture, tiny_db_repository):
@@ -55,6 +70,4 @@ def test_dataset_id_should_be_unique(dataset_fixture, tiny_db_repository):
     with pytest.raises(ExistingRecordError):
         create_dataset(repository=tiny_db_repository, values=dataset_fixture)
         create_dataset(repository=tiny_db_repository, values=dataset_fixture)
-    # clean
-    tiny_db_repository.clean()
 

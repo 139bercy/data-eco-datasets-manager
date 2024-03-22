@@ -11,6 +11,7 @@ from adapters.api import (
 from common import format_filename, make_bytes_size_human_readable
 from core.configuration import RAW_DATASETS_PATH, DOMAIN_NAME
 from core.output import export, csv_format_datasets_list
+from infrastructure.builder import TinyDBQueryBuilder
 from infrastructure.repositories import TinyDbDatasetRepository
 from quality import get_dataset_quality_score
 
@@ -32,7 +33,7 @@ def download():
     export(response=response, filename=RAW_DATASETS_PATH)
 
 
-@dataset.command("export")
+@dataset.command("export-csv")
 @click.option("-d", "--input-file-date", help="Input dataset file filled date")
 @click.option("--exclude-not-published", is_flag=True, help="Exclude not published datasets")
 @click.option("--exclude-restricted", is_flag=True, help="Exclude restricted datasets")
@@ -105,6 +106,24 @@ def database_get_dataset(name):
     click.echo(formatted)
 
 
+@database.command("export")
+@click.option("--exclude-not-published", is_flag=True, help="Exclude not published datasets")
+@click.option("--exclude-restricted", is_flag=True, help="Exclude restricted datasets")
+def export_to_csv(exclude_not_published, exclude_restricted):
+    """Export datasets list in csv file"""
+    repository = TinyDbDatasetRepository("data/db.json")
+    query_builder = TinyDBQueryBuilder(db=repository.db)
+    if exclude_not_published:
+        query_builder.add_filter('published', '==', "True")
+    if exclude_restricted:
+        query_builder.add_filter('restricted', '==', "False")
+    datasets = repository.query(query_builder.build_query())
+    print(f"Datasets: {len(datasets)}")
+    output_opts = f"{'-published' if exclude_not_published else ''}{'-not-restricted' if exclude_restricted else ''}"
+    output = format_filename(f"datasets{output_opts}.csv", "data")
+    csv_format_datasets_list(datasets, output)
+
+
 @cli.group("utils")
 def utils():
     """Standalone helping tools"""
@@ -115,3 +134,5 @@ def utils():
 def convert_size(bytes):
     result = make_bytes_size_human_readable(int(bytes))
     print(f"{bytes} octets => {result}")
+
+
