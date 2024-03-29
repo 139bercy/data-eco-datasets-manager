@@ -70,4 +70,3 @@ def test_dataset_id_should_be_unique(dataset_fixture, tiny_db_repository):
     with pytest.raises(ExistingRecordError):
         create_dataset(repository=tiny_db_repository, values=dataset_fixture)
         create_dataset(repository=tiny_db_repository, values=dataset_fixture)
-

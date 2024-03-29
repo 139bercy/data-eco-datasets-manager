@@ -34,6 +34,7 @@ class TinyDbDatasetRepository(AbstractDatasetRepository):
     def __init__(self, name):
         self.name = name
         self.db = TinyDB(name, indent=2, ensure_ascii=False)
+        self.builder = TinyDBQueryBuilder(db=self.db)
 
     def is_unique(self, dataset_id):
         index = {value["dataset_id"] for value in self.db.all()}
@@ -57,11 +58,12 @@ class TinyDbDatasetRepository(AbstractDatasetRepository):
             results = self.db.search((getattr(query, field) == value))
         else:
             results = self.db.search(query[field].search(value))
-        if len(results) >= 1 :
+        if len(results) >= 1:
             return results
         return None
 
-    def query(self, query=None):
+    def query(self):
+        query = self.builder.build_query()
         if not query:
             return self.db.all()
         return self.db.search(query)

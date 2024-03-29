@@ -8,19 +8,19 @@ class TinyDBQueryBuilder:
         self.filters = []
 
     def add_filter(self, field, operator, value):
-        if operator == '==':
+        if operator == "==":
             self.filters.append(self.query[field] == value)
-        elif operator == '!=':
+        elif operator == "!=":
             self.filters.append(self.query[field] != value)
-        elif operator == '>':
+        elif operator == ">":
             self.filters.append(self.query[field] > value)
-        elif operator == '>=':
+        elif operator == ">=":
             self.filters.append(self.query[field] >= value)
-        elif operator == '<':
+        elif operator == "<":
             self.filters.append(self.query[field] < value)
-        elif operator == '<=':
+        elif operator == "<=":
             self.filters.append(self.query[field] <= value)
-        elif operator == 'contains':
+        elif operator == "contains":
             self.filters.append(self.query[field].search(value))
         else:
             raise ValueError(f"Unsupported operator: {operator}")

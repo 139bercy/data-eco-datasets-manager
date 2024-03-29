@@ -9,9 +9,9 @@ from adapters.api import (
     automation_api_dataset_dto,
 )
 from common import format_filename, make_bytes_size_human_readable
+from community import add_community_custom_view
 from core.configuration import RAW_DATASETS_PATH, DOMAIN_NAME
 from core.output import export, csv_format_datasets_list
-from infrastructure.builder import TinyDBQueryBuilder
 from infrastructure.repositories import TinyDbDatasetRepository
 from quality import get_dataset_quality_score
 
@@ -79,7 +79,15 @@ def check_dataset_quality(name, output, no_dcat, source):
 @click.argument("name")
 def get_details(name):
     """Export dedicated dataset details"""
-    get_dataset_from_api(name, True)
+    get_dataset_from_api(name=name, output=True)
+
+
+@dataset.command("add-custom-view")
+@click.argument("name")
+def add_custom_view(name):
+    dataset = get_dataset_from_api(name=name, output=False)
+    dataset_uid = dataset["results"][0]["dataset_uid"]
+    add_community_custom_view(dataset_uid=dataset_uid)
 
 
 @cli.group("db")
@@ -91,7 +99,7 @@ def database():
 @click.argument("chain")
 def search(chain):
     repository = TinyDbDatasetRepository("data/db.json")
-    results = repository.search(chain=chain)
+    results = repository.search(field="dataset_id", value=chain)
     for result in results:
         print(result["dataset_id"])
 
@@ -110,14 +118,14 @@ def database_get_dataset(name):
 @click.option("--exclude-not-published", is_flag=True, help="Exclude not published datasets")
 @click.option("--exclude-restricted", is_flag=True, help="Exclude restricted datasets")
 def export_to_csv(exclude_not_published, exclude_restricted):
-    """Export datasets list in csv file"""
+    """Append new datasets to database"""
     repository = TinyDbDatasetRepository("data/db.json")
-    query_builder = TinyDBQueryBuilder(db=repository.db)
+    query_builder = repository.builder
     if exclude_not_published:
-        query_builder.add_filter('published', '==', "True")
+        query_builder.add_filter("published", "==", "True")
     if exclude_restricted:
-        query_builder.add_filter('restricted', '==', "False")
-    datasets = repository.query(query_builder.build_query())
+        query_builder.add_filter("restricted", "==", "False")
+    datasets = repository.query()
     print(f"Datasets: {len(datasets)}")
     output_opts = f"{'-published' if exclude_not_published else ''}{'-not-restricted' if exclude_restricted else ''}"
     output = format_filename(f"datasets{output_opts}.csv", "data")
@@ -134,5 +142,3 @@ def utils():
 def convert_size(bytes):
     result = make_bytes_size_human_readable(int(bytes))
     print(f"{bytes} octets => {result}")
-
-

@@ -44,11 +44,17 @@ class Dataset:
 
     @classmethod
     def create(cls, *args, **kwargs):
-        buid = get_key(f"{kwargs['created']}{kwargs['dataset_id']}")
-        return cls(buid=buid, *args, **kwargs)
+        kwargs["buid"] = get_key(f"{kwargs['created']}{kwargs['dataset_id']}")
+        return cls(**kwargs)
 
     def update(
-        self, download_count: int, api_call_count: int, popularity_score: float, records_size: int, size: str, records_count: int
+        self,
+        download_count: int,
+        api_call_count: int,
+        popularity_score: float,
+        records_size: int,
+        size: str,
+        records_count: int,
     ):
         self.download_count = download_count
         self.api_call_count = api_call_count
