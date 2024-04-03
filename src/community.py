@@ -53,7 +53,8 @@ def add_html_custom_view(dataset_uid, html_payload):
         json=html_payload,
         headers=HEADERS,
     )
-    print("Add HTML custom view", json.loads(response.text))
+    if response.status_code == 200:
+        print(f"{dataset_uid} - Add HTML custom view: OK")
 
 
 def add_css_custom_view(dataset_uid, css_payload):
@@ -62,7 +63,8 @@ def add_css_custom_view(dataset_uid, css_payload):
         json=css_payload,
         headers=HEADERS,
     )
-    print("Add CSS custom view", json.loads(response.text))
+    if response.status_code == 200:
+        print(f"{dataset_uid} - Add CSS custom view: OK")
 
 
 def activate_custom_view(dataset_uid):
@@ -72,7 +74,7 @@ def activate_custom_view(dataset_uid):
         json=payload,
         headers=HEADERS,
     )
-    print("Activate custom view", json.loads(response.text))
+    print(f"{dataset_uid} - Activate custom view: OK", json.loads(response.text))
 
 
 def add_title_to_custom_view(dataset_uid):

@@ -85,6 +85,7 @@ def get_details(name):
 @dataset.command("add-custom-view")
 @click.argument("name")
 def add_custom_view(name):
+    """Add community view and discussions tab"""
     dataset = get_dataset_from_api(name=name, output=False)
     dataset_uid = dataset["results"][0]["dataset_uid"]
     add_community_custom_view(dataset_uid=dataset_uid)
