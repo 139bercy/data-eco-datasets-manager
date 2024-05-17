@@ -10,7 +10,7 @@ from quality import get_dataset_quality_score
 from stats import get_dataset_stats_report
 
 URL = f"{DOMAIN_NAME}/api/explore/v2.1/catalog/datasets/"
-DCAT = False
+DCAT = True
 REPOSITORY = TinyDbDatasetRepository(name="db.json")
 
 
