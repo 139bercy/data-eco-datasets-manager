@@ -1,4 +1,5 @@
 import json
+import time
 
 import click
 
@@ -13,6 +14,7 @@ from community import add_community_custom_view
 from core.configuration import RAW_DATASETS_PATH, DOMAIN_NAME
 from core.output import export, csv_format_datasets_list
 from infrastructure.repositories import TinyDbDatasetRepository
+from publications import unpublish, publish
 from quality import get_dataset_quality_score
 
 
@@ -89,6 +91,16 @@ def add_custom_view(name):
     dataset = get_dataset_from_api(name=name, output=False)
     dataset_uid = dataset["results"][0]["dataset_uid"]
     add_community_custom_view(dataset_uid=dataset_uid)
+
+
+@dataset.command("republish")
+@click.argument("name")
+def republish(name):
+    dataset = get_dataset_from_api(name=name, output=False)
+    dataset_uid = dataset["results"][0]["dataset_uid"]
+    unpublish(dataset_uid=dataset_uid)
+    while publish(dataset_uid=dataset_uid) == 400:
+        time.sleep(1)
 
 
 @cli.group("db")
