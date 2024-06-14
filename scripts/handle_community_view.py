@@ -4,7 +4,7 @@ from community import add_community_custom_view
 
 ds = []
 
-with open("data/2024-04-03-datasets.json", "r") as file:
+with open("data/2024-06-10-datasets.json", "r") as file:
     data = json.load(file)["results"]
     for dataset in data:
         name = dataset.get("metadata").get("default").get("title", {}).get("value", None)
@@ -17,7 +17,7 @@ with open("data/2024-04-03-datasets.json", "r") as file:
         if dataset["is_restricted"]:
             print(f"Dataset: '{name}' is restricted. Skipping...")
             continue
-        elif 'custom_view_title' in  dataset['metadata']['visualization'] and dataset['metadata']['visualization']['custom_view_title']['value'] == 'Communauté':
+        elif 'custom_view_title' in  dataset['metadata']['visualization'] and dataset['metadata']['visualization']['custom_view_title']['value'] == 'Contributions':
             print(f"Dataset: '{name}' already have community view. Skipping...")
         else:
             add_community_custom_view(dataset_uid=ds_id)

@@ -78,7 +78,7 @@ def activate_custom_view(dataset_uid):
 
 
 def add_title_to_custom_view(dataset_uid):
-    title_playload = {"value": "Communauté"}
+    title_playload = {"value": "Contributions"}
     response = requests.put(
         f"https://data.economie.gouv.fr/api/automation/v1.0/datasets/{dataset_uid}/metadata/visualization/custom_view_title",
         json=title_playload,
