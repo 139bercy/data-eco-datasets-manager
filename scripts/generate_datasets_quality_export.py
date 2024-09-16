@@ -40,6 +40,7 @@ with open(f"data/{filename}", "w") as report_file:
         "size",
         "records_count",
         "api_call_count",
+        "link",
         "popularity_score",
         "description_score",
         "default_score",
@@ -52,7 +53,6 @@ with open(f"data/{filename}", "w") as report_file:
         ds_id = ds[1]["dataset_id"]
         print(f"{ds[0]}- {ds_id}")
         params = {"where": f"dataset_id='{ds_id}'", "include_app_metas": True}
-
         data = query_ods(url=URL, params=params)
         stats_report = get_dataset_stats_report(data=data, pprint=False)
         ds_report = get_dataset_quality_score(data=data, dcat=DCAT, pprint=False)

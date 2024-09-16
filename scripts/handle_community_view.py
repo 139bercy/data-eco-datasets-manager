@@ -4,7 +4,7 @@ from community import add_community_custom_view
 
 ds = []
 
-with open("data/2024-06-10-datasets.json", "r") as file:
+with open("data/xxxx-xx-xx-datasets.json", "r") as file:
     data = json.load(file)["results"]
     for dataset in data:
         name = dataset.get("metadata").get("default").get("title", {}).get("value", None)

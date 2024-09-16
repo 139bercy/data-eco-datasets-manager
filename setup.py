@@ -7,7 +7,7 @@ with open("README.md") as readme_file:
     readme = readme_file.read()
 
 requirements = [
-    "Click>=6.0",
+    "Click>=8.0",
 ]
 
 setup_requirements = [
@@ -29,7 +29,7 @@ setup(
     description="Handle datasets using Opendatasoft API",
     entry_points={
         "console_scripts": [
-            "cli=cli:cli",
+            "app=cli:cli",
         ],
     },
     install_requires=requirements,

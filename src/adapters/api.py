@@ -54,5 +54,6 @@ def explore_api_dataset_dto(dataset: dict):
         "records_size": records_size,
         "size": make_bytes_size_human_readable(bytes_size=records_size),
         "records_count": dataset.get("metas", {}).get("default", {}).get("records_count", None),
+        "link": f"https://data.economie.gouv.fr/explore/dataset/{dataset['dataset_id']}",
     }
     return dataset_report

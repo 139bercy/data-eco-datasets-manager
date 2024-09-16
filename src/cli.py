@@ -42,8 +42,8 @@ def download():
 def export_to_csv(input_file_date, exclude_not_published, exclude_restricted):
     """Export datasets list in csv file"""
     filename = format_filename(filename=f"datasets.json", directory="data", date=input_file_date)
+    report = []
     with open(filename, "r") as file:
-        report = []
         data = json.load(file)
         datasets = data["results"]
     if exclude_not_published:
@@ -121,7 +121,7 @@ def search(chain):
 @click.argument("name")
 def database_get_dataset(name):
     """Get intel on one dataset"""
-    repository = TinyDbDatasetRepository("data/db.json")
+    repository = TinyDbDatasetRepository("db.json")
     result = repository.get_one(dataset_id=name)
     formatted = json.dumps(result.__dict__, indent=2, ensure_ascii=False)
     click.echo(formatted)
@@ -132,7 +132,7 @@ def database_get_dataset(name):
 @click.option("--exclude-restricted", is_flag=True, help="Exclude restricted datasets")
 def export_to_csv(exclude_not_published, exclude_restricted):
     """Append new datasets to database"""
-    repository = TinyDbDatasetRepository("data/db.json")
+    repository = TinyDbDatasetRepository("db.json")
     query_builder = repository.builder
     if exclude_not_published:
         query_builder.add_filter("published", "==", "True")

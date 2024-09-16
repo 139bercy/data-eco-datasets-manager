@@ -18,6 +18,7 @@ class Dataset:
         records_size: int = None,
         size: str = None,
         records_count: int = None,
+        link: str = None,
         description_score: float = None,
         default_score: float = None,
         dcat_score: float = None,
@@ -37,6 +38,7 @@ class Dataset:
         self.records_size = records_size
         self.size = size
         self.records_count = records_count
+        self.link = link
         self.description_score = description_score
         self.default_score = default_score
         self.dcat_score = dcat_score

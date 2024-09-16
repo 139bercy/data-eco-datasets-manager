@@ -7,7 +7,7 @@ from core.models import Dataset
 
 def create_dataset(repository, values) -> Dataset:
     dataset = Dataset.create(**values)
-    repository.add(dataset)
+    repository.upsert(dataset)
     return dataset
 
 

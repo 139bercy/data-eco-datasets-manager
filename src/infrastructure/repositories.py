@@ -68,13 +68,21 @@ class TinyDbDatasetRepository(AbstractDatasetRepository):
             return self.db.all()
         return self.db.search(query)
 
-    def add(self, dataset):
+    def add(self, dataset: Dataset):
+        print(dataset.dataset_id)
         if self.is_unique(dataset_id=dataset.dataset_id):
             self.db.insert(dataset.__dict__)
         else:
             raise ExistingRecordError
 
+    def upsert(self, dataset: Dataset):
+        try:
+            self.add(dataset)
+        except ExistingRecordError:
+            self.update(dataset.dataset_id, dataset.__dict__)
+
     def update(self, dataset_id: str, values: dict) -> None:
+        print(values["dataset_id"], "Updated")
         query = Query()
         self.db.update(values, query.dataset_id == dataset_id)
 

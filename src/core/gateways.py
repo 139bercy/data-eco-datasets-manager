@@ -11,6 +11,10 @@ class AbstractDatasetRepository(abc.ABC):  # pragma: no cover
         raise NotImplementedError
 
     @abc.abstractmethod
+    def upsert(self, dataset):
+        raise NotImplementedError
+
+    @abc.abstractmethod
     def add(self, dataset):
         raise NotImplementedError
 
