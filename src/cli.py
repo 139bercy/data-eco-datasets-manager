@@ -16,7 +16,7 @@ from core.output import export, csv_format_datasets_list
 from infrastructure.repositories import TinyDbDatasetRepository
 from publications import unpublish, publish
 from quality import get_dataset_quality_score
-
+import security
 
 @click.group()
 def cli():
@@ -145,6 +145,26 @@ def export_to_csv(exclude_not_published, exclude_restricted, custom_headers):
     output_opts = f"{'-published' if exclude_not_published else ''}{'-not-restricted' if exclude_restricted else ''}"
     output = format_filename(f"datasets{output_opts}.csv", "data")
     csv_format_datasets_list(report=datasets, filename=output, headers=headers)
+
+
+@cli.group("users")
+def users():
+    """Users management"""
+
+
+@users.command("get")
+def export_users_to_csv():
+    security.get_users()
+
+
+@cli.group("groups")
+def groups():
+    """Groups management"""
+
+
+@groups.command("get")
+def export_groups_to_csv():
+    security.get_groups()
 
 
 @cli.group("utils")
