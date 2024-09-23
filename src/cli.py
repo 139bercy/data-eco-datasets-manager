@@ -12,11 +12,12 @@ from adapters.api import (
 from common import format_filename, make_bytes_size_human_readable
 from community import add_community_custom_view
 from core.configuration import RAW_DATASETS_PATH, DOMAIN_NAME, CUSTOM_HEADERS
-from core.output import export, csv_format_datasets_list
+from core.output import to_json, to_csv
 from infrastructure.repositories import TinyDbDatasetRepository
 from publications import unpublish, publish
 from quality import get_dataset_quality_score
 import security
+
 
 @click.group()
 def cli():
@@ -32,7 +33,7 @@ def dataset():
 def download():
     """Retrieve datasets from ODS Automation API"""
     response = query_ods(url=f"{DOMAIN_NAME}/api/automation/v1.0/datasets/", params={"limit": 1000})
-    export(response=response, filename=RAW_DATASETS_PATH)
+    to_json(response=response, filename=RAW_DATASETS_PATH)
 
 
 @dataset.command("export-csv")
@@ -55,7 +56,7 @@ def export_to_csv(input_file_date, exclude_not_published, exclude_restricted):
         report.append(dataset_report)
     output_opts = f"{'-published' if exclude_not_published else ''}{'-not-restricted' if exclude_restricted else ''}"
     output = format_filename(f"datasets{output_opts}.csv", "data")
-    csv_format_datasets_list(report=report, filename=output, headers=CUSTOM_HEADERS)
+    to_csv(report=report, filename=output, headers=CUSTOM_HEADERS)
 
 
 @dataset.command("check-quality")
@@ -143,8 +144,8 @@ def export_to_csv(exclude_not_published, exclude_restricted, custom_headers):
     headers = CUSTOM_HEADERS if custom_headers is not None else datasets[0].keys()
     print(f"Datasets: {len(datasets)}")
     output_opts = f"{'-published' if exclude_not_published else ''}{'-not-restricted' if exclude_restricted else ''}"
-    output = format_filename(f"datasets{output_opts}.csv", "data")
-    csv_format_datasets_list(report=datasets, filename=output, headers=headers)
+    filename = format_filename(f"datasets{output_opts}.csv", "data")
+    to_csv(report=datasets, filename=filename, headers=headers)
 
 
 @cli.group("users")
@@ -154,7 +155,10 @@ def users():
 
 @users.command("get")
 def export_users_to_csv():
-    security.get_users()
+    data = security.get_users()
+    headers = data[0].keys()
+    filename = format_filename(f"users.csv", "data")
+    to_csv(report=data, filename=filename, headers=headers)
 
 
 @cli.group("groups")
@@ -164,7 +168,20 @@ def groups():
 
 @groups.command("get")
 def export_groups_to_csv():
-    security.get_groups()
+    data = security.get_groups()
+    headers = [
+        "title",
+        "description",
+        "permissions",
+        "uid",
+        "management_limits",
+        "explore_limits",
+        "user_count",
+        "created_at",
+        "updated_at",
+    ]
+    filename = format_filename(f"groups.csv", "data")
+    to_csv(report=data, filename=filename, headers=headers)
 
 
 @cli.group("utils")

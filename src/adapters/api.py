@@ -5,7 +5,7 @@ import requests
 from common import make_bytes_size_human_readable
 from core.configuration import HEADERS, DOMAIN_NAME
 from core.exceptions import HTTPError
-from core.output import response_to_json, export
+from core.output import response_to_json, to_json
 
 
 def query_ods(url: str, params: dict):
@@ -22,7 +22,7 @@ def get_dataset_from_api(name: str, output: bool):
     params = {"where": f"dataset_id='{name}'", "include_app_metas": True}
     response = query_ods(url=url, params=params)
     if output:
-        export(response=response, filename=f"data/dataset-sample.json")
+        to_json(response=response, filename=f"data/dataset-sample.json")
     return response
 
 

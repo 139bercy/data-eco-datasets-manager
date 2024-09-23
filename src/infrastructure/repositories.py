@@ -9,7 +9,6 @@ from infrastructure.builder import TinyDBQueryBuilder
 
 
 class InMemoryDatasetRepository(AbstractDatasetRepository):
-
     def __init__(self, db):
         self.db = db
 
