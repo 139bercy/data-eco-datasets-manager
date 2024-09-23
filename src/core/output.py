@@ -21,11 +21,9 @@ def export(response, filename):
     print(f"File {filename} has been created!")
 
 
-def csv_format_datasets_list(report: list, filename=FORMATTED_DATASETS_LIST):
+def csv_format_datasets_list(report: list, filename: str = FORMATTED_DATASETS_LIST, headers: list = None):
     with open(filename, "w") as output:
-        headers = report[0].keys()
-        headers = ['buid', 'created', 'updated', 'dataset_id', 'title', 'publisher', 'published', 'restricted', 'records_size', 'size', 'records_count', "link"]
-        writer = csv.DictWriter(f=output, fieldnames=headers, delimiter=";", extrasaction='ignore')
+        writer = csv.DictWriter(f=output, fieldnames=headers, delimiter=";", extrasaction="ignore")
         writer.writeheader()
         writer.writerows(report)
     print(f"{filename} has been created.")

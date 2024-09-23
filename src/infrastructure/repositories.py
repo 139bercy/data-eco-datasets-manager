@@ -9,6 +9,7 @@ from infrastructure.builder import TinyDBQueryBuilder
 
 
 class InMemoryDatasetRepository(AbstractDatasetRepository):
+
     def __init__(self, db):
         self.db = db
 
@@ -28,6 +29,9 @@ class InMemoryDatasetRepository(AbstractDatasetRepository):
             return dataset
         else:
             raise ValueError("Dataset with ID {} not found".format(dataset_id))
+
+    def upsert(self, dataset):
+        pass
 
 
 class TinyDbDatasetRepository(AbstractDatasetRepository):
@@ -69,7 +73,6 @@ class TinyDbDatasetRepository(AbstractDatasetRepository):
         return self.db.search(query)
 
     def add(self, dataset: Dataset):
-        print(dataset.dataset_id)
         if self.is_unique(dataset_id=dataset.dataset_id):
             self.db.insert(dataset.__dict__)
         else:
@@ -82,7 +85,6 @@ class TinyDbDatasetRepository(AbstractDatasetRepository):
             self.update(dataset.dataset_id, dataset.__dict__)
 
     def update(self, dataset_id: str, values: dict) -> None:
-        print(values["dataset_id"], "Updated")
         query = Query()
         self.db.update(values, query.dataset_id == dataset_id)
 
