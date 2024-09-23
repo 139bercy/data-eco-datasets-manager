@@ -26,7 +26,7 @@ CUSTOM_HEADERS = [
     "link",
 ]
 
-USER_PERMISSIONS = [
+GROUP_PERMISSIONS = [
     "create_page",
     "manage_page",
     "create_dataset",

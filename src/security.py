@@ -3,6 +3,7 @@ import csv
 import requests
 
 from core.configuration import DOMAIN_NAME, HEADERS
+from core.output import pprint
 
 
 def get_users():
@@ -20,3 +21,9 @@ def get_groups():
     data = result["results"]
     print("Groups total count", result["total_count"])
     return data
+
+
+def update_one_group_permissions(group_id: str, title: str, permissions: list):
+    base_url = f"{DOMAIN_NAME}/api/automation/v1.0/groups/{group_id}/"
+    response = requests.put(url=base_url, headers=HEADERS, data={"permissions": permissions, "title": title})
+    pprint(response.json())

@@ -11,7 +11,7 @@ from adapters.api import (
 )
 from common import format_filename, make_bytes_size_human_readable
 from community import add_community_custom_view
-from core.configuration import RAW_DATASETS_PATH, DOMAIN_NAME, CUSTOM_HEADERS
+from core.configuration import RAW_DATASETS_PATH, DOMAIN_NAME, CUSTOM_HEADERS, GROUP_PERMISSIONS
 from core.output import to_json, to_csv
 from infrastructure.repositories import TinyDbDatasetRepository
 from publications import unpublish, publish
@@ -184,6 +184,13 @@ def export_groups_to_csv():
     ]
     filename = format_filename(f"groups.csv", "data")
     to_csv(report=data, filename=filename, headers=headers)
+
+
+@groups.command("permissions")
+@click.argument("group_id")
+@click.argument("title")
+def update_group_permissions(group_id, title):
+    security.update_one_group_permissions(group_id=group_id, title=title, permissions=GROUP_PERMISSIONS)
 
 
 @cli.group("utils")
