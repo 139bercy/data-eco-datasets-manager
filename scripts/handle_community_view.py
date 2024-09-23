@@ -17,7 +17,10 @@ with open("data/xxxx-xx-xx-datasets.json", "r") as file:
         if dataset["is_restricted"]:
             print(f"Dataset: '{name}' is restricted. Skipping...")
             continue
-        elif 'custom_view_title' in  dataset['metadata']['visualization'] and dataset['metadata']['visualization']['custom_view_title']['value'] == 'Contributions':
+        elif (
+            "custom_view_title" in dataset["metadata"]["visualization"]
+            and dataset["metadata"]["visualization"]["custom_view_title"]["value"] == "Contributions"
+        ):
             print(f"Dataset: '{name}' already have community view. Skipping...")
         else:
             add_community_custom_view(dataset_uid=ds_id)

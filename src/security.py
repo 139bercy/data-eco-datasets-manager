@@ -2,11 +2,7 @@ import csv
 
 import requests
 
-from datetime import datetime
-
-from common import format_filename
 from core.configuration import DOMAIN_NAME, HEADERS
-from core.output import to_csv
 
 
 def get_users():

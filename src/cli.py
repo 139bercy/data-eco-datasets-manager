@@ -155,6 +155,7 @@ def users():
 
 @users.command("get")
 def export_users_to_csv():
+    """Export users and permissions to csv"""
     data = security.get_users()
     headers = data[0].keys()
     filename = format_filename(f"users.csv", "data")
@@ -168,6 +169,7 @@ def groups():
 
 @groups.command("get")
 def export_groups_to_csv():
+    """Export groups and permissions to csv"""
     data = security.get_groups()
     headers = [
         "title",
