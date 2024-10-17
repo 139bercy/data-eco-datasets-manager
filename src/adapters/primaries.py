@@ -18,7 +18,7 @@ class DatasetCsvRepository(AbstractDatasetRepository):
 
     def get_all(self):
         with open(self.filepath, "r") as file:
-            reader = csv.DictReader(file)
+            reader = csv.DictReader(file, delimiter=";")
             return [row for row in reader]
 
     def get_one(self, dataset_id):
@@ -30,6 +30,9 @@ class DatasetCsvRepository(AbstractDatasetRepository):
         raise NotImplementedError
 
     def update(self, dataset_id: str, values: dict) -> None:
+        raise NotImplementedError
+
+    def upsert(self, dataset):
         raise NotImplementedError
 
 

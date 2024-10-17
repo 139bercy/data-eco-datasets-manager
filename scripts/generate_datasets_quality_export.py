@@ -27,6 +27,7 @@ filename = format_filename(filename="datasets-quality-report.csv")
 
 with open(f"data/{filename}", "w") as report_file:
     headers = [
+        "uid",
         "buid",
         "created",
         "updated",

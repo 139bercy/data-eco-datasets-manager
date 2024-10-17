@@ -104,7 +104,7 @@ def republish(name):
         time.sleep(1)
 
 
-@cli.group("db")
+@cli.group("database")
 def database():
     """Database management"""
 
@@ -143,7 +143,7 @@ def export_to_csv(exclude_not_published, exclude_restricted, custom_headers):
     datasets = repository.query()
     headers = CUSTOM_HEADERS if custom_headers is not None else datasets[0].keys()
     print(f"Datasets: {len(datasets)}")
-    output_opts = f"{'-published' if exclude_not_published else ''}{'-not-restricted' if exclude_restricted else ''}"
+    output_opts = f"{'-catalog' if custom_headers else ''}{'-published' if exclude_not_published else ''}{'-not-restricted' if exclude_restricted else ''}"
     filename = format_filename(f"datasets{output_opts}.csv", "data")
     to_csv(report=datasets, filename=filename, headers=headers)
 

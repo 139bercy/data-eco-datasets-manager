@@ -34,6 +34,7 @@ def get_dataset_from_file():
 
 def automation_api_dataset_dto(dataset: dict):
     dataset_report = {
+        "uid": dataset["uid"],
         "created": dataset["created_at"],
         "updated": dataset["updated_at"],
         "dataset_id": dataset["dataset_id"],

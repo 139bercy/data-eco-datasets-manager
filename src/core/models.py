@@ -4,6 +4,7 @@ import hashlib
 class Dataset:
     def __init__(
         self,
+        uid: str,
         buid: str,
         created: str,
         updated: str,
@@ -24,6 +25,7 @@ class Dataset:
         dcat_score: float = None,
         quality_score: float = None,
     ):
+        self.uid = uid
         self.buid = buid
         self.created = created
         self.updated = updated

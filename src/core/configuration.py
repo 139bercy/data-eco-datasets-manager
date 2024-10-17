@@ -12,6 +12,7 @@ RAW_DATASETS_PATH = format_filename("datasets.json", "data")
 FORMATTED_DATASETS_LIST = format_filename("datasets.csv", "data")
 
 CUSTOM_HEADERS = [
+    "uid",
     "buid",
     "created",
     "updated",
