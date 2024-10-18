@@ -1,9 +1,13 @@
 from datetime import datetime
 
+from slugify import slugify
+
 
 def format_filename(filename: str, directory=".", date=None):
     now = date or datetime.now().date()
-    return f"{directory}/{now}-{filename}"
+    name = filename.split(".")[0]
+    extension = filename.split(".")[1]
+    return f'{directory}/{slugify(f"/{now}-{name}")}.{extension}'
 
 
 def make_bytes_size_human_readable(bytes_size: int):

@@ -5,6 +5,7 @@ coverage==7.4.3
 pytest==8.0.2
 pytest-cov==4.1.0
 python-dotenv==1.0.0
+python-slugify==8.0.4
 requests==2.31.0
 setuptools~=60.2.0
 freezegun~=1.4.0

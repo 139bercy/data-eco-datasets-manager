@@ -23,12 +23,16 @@ def to_json(response, filename: str):
     print(Fore.GREEN, f"File {filename} has been created!")
 
 
-def choose_headers(role):
+def choose_headers(role, custom: list = None):
+    headers = None
     match role:
         case "admin":
-            return ADMIN_HEADERS
+            headers = ADMIN_HEADERS
         case "user":
-            return PUBLIC_HEADERS
+            headers = PUBLIC_HEADERS
+    if custom:
+        headers.extend(custom)
+    return headers
 
 
 def to_csv(report: list, filename: str = FORMATTED_DATASETS_LIST, headers: list = None):

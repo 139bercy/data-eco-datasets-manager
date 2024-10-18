@@ -42,6 +42,15 @@ PUBLIC_HEADERS = [
     "link",
 ]
 
+
+QUALITY_HEADERS = [
+    "description_score",
+    "default_score",
+    "dcat_score",
+    "quality_score"
+]
+
+
 GROUP_PERMISSIONS = [
     "create_page",
     "manage_page",

@@ -8,6 +8,13 @@ from infrastructure.exceptions import DatabaseDeletionError, ExistingRecordError
 from infrastructure.builder import TinyDBQueryBuilder
 
 
+def type_value(value):
+    try:
+        return int(value)
+    except ValueError:
+        return value
+
+
 class InMemoryDatasetRepository(AbstractDatasetRepository):
     def __init__(self, db):
         self.db = db
@@ -47,7 +54,7 @@ class TinyDbDatasetRepository(AbstractDatasetRepository):
         return True
 
     def get_all(self):
-        raise NotImplementedError
+        return self.db.all()
 
     def get_one(self, dataset_id: str):
         query = Query()
@@ -57,13 +64,15 @@ class TinyDbDatasetRepository(AbstractDatasetRepository):
 
     def search(self, field, value):
         query = Query()
-        if type(value) == bool:
-            results = self.db.search((getattr(query, field) == value))
+        new_value = type_value(value=value)
+        if type(new_value) == bool or type(new_value) == int:
+            results = self.db.search(getattr(query, field) == new_value)
         else:
-            results = self.db.search(query[field].search(value))
+            results = self.db.search(query[field].search(new_value))
         if len(results) >= 1:
             return results
         return None
+
 
     def query(self):
         query = self.builder.build_query()
