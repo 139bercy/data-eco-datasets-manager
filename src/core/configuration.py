@@ -12,6 +12,8 @@ RAW_DATASETS_PATH = format_filename("datasets.json", "data")
 FORMATTED_DATASETS_LIST = format_filename("datasets.csv", "data")
 DATABASE = os.environ["DATABASE"]
 
+DATASET_URL = f"{DOMAIN_NAME}/api/explore/v2.1/catalog/datasets/"
+
 ADMIN_HEADERS = [
     "uid",
     "buid",

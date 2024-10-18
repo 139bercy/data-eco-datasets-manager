@@ -22,7 +22,15 @@ def get_dataset_from_api(name: str, output: bool):
     params = {"where": f"dataset_id='{name}'", "include_app_metas": True}
     response = query_ods(url=url, params=params)
     if output:
-        to_json(response=response, filename=f"data/dataset-sample.json")
+        to_json(response=response, filename=f"data/{name}.json")
+    return response
+
+
+def get_dataset_from_automation_api(dataset_uid: str, output: bool):
+    url = f"{DOMAIN_NAME}/api/automation/v1.0/datasets/{dataset_uid}"
+    response = query_ods(url=url, params={})
+    if output:
+        to_json(response=response, filename=f"data/{response['dataset_id']}.json")
     return response
 
 

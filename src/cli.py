@@ -7,16 +7,19 @@ from adapters.api import (
     get_dataset_from_api,
     get_dataset_from_file,
     query_ods,
-    automation_api_dataset_dto,
+    automation_api_dataset_dto, get_dataset_from_automation_api,
 )
+from adapters.usecases import create_dataset
 from common import format_filename, make_bytes_size_human_readable
 from services.community import add_community_custom_view
-from core.configuration import RAW_DATASETS_PATH, DOMAIN_NAME, ADMIN_HEADERS, QUALITY_HEADERS, GROUP_PERMISSIONS, DATABASE
+from core.configuration import RAW_DATASETS_PATH, DOMAIN_NAME, ADMIN_HEADERS, QUALITY_HEADERS, GROUP_PERMISSIONS, \
+    DATABASE, DATASET_URL
 from core.output import to_json, to_csv, pprint, choose_headers
 from infrastructure.repositories import TinyDbDatasetRepository
 from services.publications import unpublish, publish
 from services.quality import get_dataset_quality_score
 from services import security
+from services.stats import get_dataset_stats_report
 
 
 @click.group()
@@ -82,7 +85,8 @@ def check_dataset_quality(name, output, no_dcat, source):
 @click.argument("name")
 def get_details(name):
     """Export dedicated dataset details"""
-    get_dataset_from_api(name=name, output=True)
+    data = get_dataset_from_api(name=name, output=True)
+    pprint(data)
 
 
 @dataset.command("add-custom-view")
@@ -110,6 +114,25 @@ def database():
     """Database management"""
 
 
+@database.command("upsert")
+@click.argument("dataset-id")
+def upsert(dataset_id):
+    repository = TinyDbDatasetRepository(DATABASE)
+    data = repository.get_one(dataset_id=dataset_id)
+
+    automation_response = get_dataset_from_automation_api(dataset_uid=data.uid, output=False)
+    automation_dto = automation_api_dataset_dto(automation_response)
+
+    explore_response = get_dataset_from_api(name=dataset_id, output=False)
+    stats_report = get_dataset_stats_report(data=explore_response, pprint=False)
+    ds_report = get_dataset_quality_score(data=explore_response, dcat=True, pprint=False)
+    result = {**automation_dto, **stats_report, **ds_report}
+
+    dataset = create_dataset(repository=repository, values=result)
+    pprint(dataset.__dict__)
+
+
+
 def output_results(results, detail):
     if not results:
         click.echo("No results available for this keyword.")
@@ -121,18 +144,18 @@ def output_results(results, detail):
     click.echo(click.style(f"Resources : {len(results)}", fg="yellow"))
 
 
-@database.command("search")
+@cli.command("search")
 @click.argument("chain")
-@click.option("--field", default="dataset_id", help="Field for research")
-@click.option("--detail", is_flag=True, default=False, help="Print resources detail")
-@click.option("--export", is_flag=True, default=False, help="Export to csv")
-@click.option("--role", default="admin", help="Public for export", type=click.Choice(['admin', 'user']))
-@click.option("--export-fields", "-f", help="Custom headers for exports", multiple=True)
-def search(chain, field, detail, export, role, export_fields):
+@click.option("--field", "-f", default="dataset_id", help="Field for research")
+@click.option("--detail", "-d", is_flag=True, default=False, help="Print resources detail")
+@click.option("--export", "-e", is_flag=True, default=False, help="Export resources to csv")
+@click.option("--role", "-r", default="admin", help="Public for export", type=click.Choice(['admin', 'user']))
+@click.option("--header", "-h", help="Custom headers for exports", multiple=True)
+def search(chain, field, detail, export, role, header):
     """Retrieve resources from database"""
     repository = TinyDbDatasetRepository(DATABASE)
     results = repository.search(field=field, value=chain)
-    headers = list(export_fields) if len(export_fields) != 0 else choose_headers(role=role)
+    headers = list(header) if len(header) != 0 else choose_headers(role=role)
     output_results(results=results, detail=detail)
     if export:
         output = format_filename(f"datasets-{field}-{chain}.csv", "data")
