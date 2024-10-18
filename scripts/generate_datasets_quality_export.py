@@ -6,8 +6,8 @@ from adapters.usecases import create_dataset
 from common import format_filename
 from core.configuration import FORMATTED_DATASETS_LIST, DOMAIN_NAME
 from infrastructure.repositories import TinyDbDatasetRepository
-from quality import get_dataset_quality_score
-from stats import get_dataset_stats_report
+from services.quality import get_dataset_quality_score
+from services.stats import get_dataset_stats_report
 
 URL = f"{DOMAIN_NAME}/api/explore/v2.1/catalog/datasets/"
 DCAT = True

@@ -10,13 +10,13 @@ from adapters.api import (
     automation_api_dataset_dto,
 )
 from common import format_filename, make_bytes_size_human_readable
-from community import add_community_custom_view
+from services.community import add_community_custom_view
 from core.configuration import RAW_DATASETS_PATH, DOMAIN_NAME, ADMIN_HEADERS, QUALITY_HEADERS, GROUP_PERMISSIONS, DATABASE
 from core.output import to_json, to_csv, pprint, choose_headers
 from infrastructure.repositories import TinyDbDatasetRepository
-from publications import unpublish, publish
-from quality import get_dataset_quality_score
-import security
+from services.publications import unpublish, publish
+from services.quality import get_dataset_quality_score
+from services import security
 
 
 @click.group()

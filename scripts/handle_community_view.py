@@ -1,6 +1,6 @@
 import json
 
-from community import add_community_custom_view
+from services.community import add_community_custom_view
 
 ds = []
 

@@ -1,6 +1,6 @@
 import pytest
 
-from src.quality import (
+from services.quality import (
     get_global_quality_score,
     get_metadata_quality_score,
     get_dataset_quality_score,
