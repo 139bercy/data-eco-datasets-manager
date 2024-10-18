@@ -45,12 +45,7 @@ PUBLIC_HEADERS = [
 ]
 
 
-QUALITY_HEADERS = [
-    "description_score",
-    "default_score",
-    "dcat_score",
-    "quality_score"
-]
+QUALITY_HEADERS = ["description_score", "default_score", "dcat_score", "quality_score"]
 
 
 GROUP_PERMISSIONS = [

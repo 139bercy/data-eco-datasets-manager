@@ -73,7 +73,6 @@ class TinyDbDatasetRepository(AbstractDatasetRepository):
             return results
         return None
 
-
     def query(self):
         query = self.builder.build_query()
         if not query:

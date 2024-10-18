@@ -1,3 +1,4 @@
+import csv
 import json
 import time
 
@@ -7,12 +8,19 @@ from adapters.api import (
     get_dataset_from_api,
     get_dataset_from_file,
     query_ods,
-    automation_api_dataset_dto, get_dataset_from_automation_api,
+    automation_api_dataset_dto,
+    get_dataset_from_automation_api,
 )
 from adapters.usecases import create_dataset
 from common import format_filename, make_bytes_size_human_readable
-from core.configuration import RAW_DATASETS_PATH, DOMAIN_NAME, ADMIN_HEADERS, QUALITY_HEADERS, GROUP_PERMISSIONS, \
-    DATABASE
+from core.configuration import (
+    RAW_DATASETS_PATH,
+    DOMAIN_NAME,
+    ADMIN_HEADERS,
+    QUALITY_HEADERS,
+    GROUP_PERMISSIONS,
+    DATABASE,
+)
 from core.output import to_json, to_csv, pprint, choose_headers, sort_by_field
 from infrastructure.repositories import TinyDbDatasetRepository
 from services import security
@@ -89,13 +97,29 @@ def get_details(name):
     pprint(data)
 
 
-@dataset.command("add-custom-view")
+@dataset.group("custom-view")
+def custom_view():
+    """Add community view and discussions tab"""
+
+
+@custom_view.command("from-id")
 @click.argument("name")
 def add_custom_view(name):
-    """Add community view and discussions tab"""
+    """Use dataset id as input"""
     dataset = get_dataset_from_api(name=name, output=False)
     dataset_uid = dataset["results"][0]["dataset_uid"]
     add_community_custom_view(dataset_uid=dataset_uid)
+
+
+@custom_view.command("from-file")
+@click.argument("file")
+def add_custom_view(file):
+    """Use csv file with uids"""
+    with open(file, "r") as file:
+        reader = csv.DictReader(file, delimiter=";")
+        for row in reader:
+            uid = row["uid"]
+            add_community_custom_view(dataset_uid=uid)
 
 
 @dataset.command("republish")
@@ -143,26 +167,6 @@ def output_results(results, detail):
     click.echo(click.style(f"Resources : {len(results)}", fg="yellow"))
 
 
-@cli.command("search")
-@click.argument("chain")
-@click.option("--field", "-f", default="dataset_id", help="Field for research")
-@click.option("--detail", "-d", is_flag=True, default=False, help="Print resources detail")
-@click.option("--export", "-e", is_flag=True, default=False, help="Export resources to csv")
-@click.option("--role", "-r", default="admin", help="Public for export", type=click.Choice(['admin', 'user']))
-@click.option("--header", "-h", help="Custom headers for exports", multiple=True)
-@click.option("--sort", "-s", help="Sort by (-)field")
-def search(chain, field, detail, export, role, header, sort):
-    """Retrieve resources from database"""
-    repository = TinyDbDatasetRepository(DATABASE)
-    data = repository.search(field=field, value=chain)
-    results = sort_by_field(data=data, field=sort)
-    headers = list(header) if len(header) != 0 else choose_headers(role=role)
-    output_results(results=results, detail=detail)
-    if export:
-        output = format_filename(f"datasets-{field}-{chain}.csv", "data")
-        to_csv(report=results, filename=output, headers=headers)
-
-
 @database.command("publisher")
 def get_publishers():
     repository = TinyDbDatasetRepository(DATABASE)
@@ -183,17 +187,40 @@ def database_get_dataset(name):
     click.echo(formatted)
 
 
+@cli.command("search")
+@click.argument("chain")
+@click.option("--field", "-f", default="dataset_id", help="Field for research")
+@click.option("--detail", "-d", is_flag=True, default=False, help="Print resources detail")
+@click.option("--export", "-e", is_flag=True, default=False, help="Export resources to csv")
+@click.option("--role", "-r", default="admin", help="Public for export", type=click.Choice(["admin", "user"]))
+@click.option("--header", "-h", help="Custom headers for exports", multiple=True)
+@click.option("--sort", "-s", help="Sort by (-)field")
+def search(chain, field, detail, export, role, header, sort):
+    """Retrieve resources from database"""
+    repository = TinyDbDatasetRepository(DATABASE)
+    data = repository.search(field=field, value=chain)
+    results = sort_by_field(data=data, field=sort)
+    headers = list(header) if len(header) != 0 else choose_headers(role=role)
+    output_results(results=results, detail=detail)
+    if export:
+        output = format_filename(f"datasets-{field}-{chain}.csv", "data")
+        to_csv(report=results, filename=output, headers=headers)
+
+
 @database.command("export")
 @click.option("--exclude-not-published", is_flag=True, help="Exclude not published datasets")
 @click.option("--exclude-restricted", is_flag=True, help="Exclude restricted datasets")
 @click.option("--quality", "-q", is_flag=True, default=None, help="Add quality items")
-@click.option("--role", "-r", default="admin", help="Public for export", type=click.Choice(['admin', 'user']))
+@click.option("--role", "-r", default="admin", help="Public for export", type=click.Choice(["admin", "user"]))
+@click.option("--header", "-h", help="Custom headers for exports", multiple=True)
 @click.option("--sort", "-s", help="Sort by (-)field")
-def export_to_csv(exclude_not_published, exclude_restricted, quality, role, sort):
+def export_to_csv(exclude_not_published, exclude_restricted, quality, header, role, sort):
     """Append new datasets to database"""
     repository = TinyDbDatasetRepository(DATABASE)
     query_builder = repository.builder
-    headers = choose_headers(role=role, custom=QUALITY_HEADERS if quality else None)
+    headers = (
+        list(header) if len(header) != 0 else choose_headers(role=role, custom=QUALITY_HEADERS if quality else None)
+    )
     if exclude_not_published:
         query_builder.add_filter("published", "==", "True")
     if exclude_restricted:
@@ -201,7 +228,9 @@ def export_to_csv(exclude_not_published, exclude_restricted, quality, role, sort
     datasets = repository.query()
     results = sort_by_field(data=datasets, field=sort)
     print(f"Datasets: {len(datasets)}")
-    output_opts = f"-catalog{'-published' if exclude_not_published else ''}{'-not-restricted' if exclude_restricted else ''}"
+    output_opts = (
+        f"-catalog{'-published' if exclude_not_published else ''}{'-not-restricted' if exclude_restricted else ''}"
+    )
     filename = format_filename(f"datasets{output_opts}.csv", "data")
     to_csv(report=results, filename=filename, headers=headers)
 
