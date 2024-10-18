@@ -11,14 +11,14 @@ from adapters.api import (
 )
 from adapters.usecases import create_dataset
 from common import format_filename, make_bytes_size_human_readable
-from services.community import add_community_custom_view
 from core.configuration import RAW_DATASETS_PATH, DOMAIN_NAME, ADMIN_HEADERS, QUALITY_HEADERS, GROUP_PERMISSIONS, \
-    DATABASE, DATASET_URL
-from core.output import to_json, to_csv, pprint, choose_headers
+    DATABASE
+from core.output import to_json, to_csv, pprint, choose_headers, sort_by_field
 from infrastructure.repositories import TinyDbDatasetRepository
+from services import security
+from services.community import add_community_custom_view
 from services.publications import unpublish, publish
 from services.quality import get_dataset_quality_score
-from services import security
 from services.stats import get_dataset_stats_report
 
 
@@ -132,7 +132,6 @@ def upsert(dataset_id):
     pprint(dataset.__dict__)
 
 
-
 def output_results(results, detail):
     if not results:
         click.echo("No results available for this keyword.")
@@ -151,10 +150,12 @@ def output_results(results, detail):
 @click.option("--export", "-e", is_flag=True, default=False, help="Export resources to csv")
 @click.option("--role", "-r", default="admin", help="Public for export", type=click.Choice(['admin', 'user']))
 @click.option("--header", "-h", help="Custom headers for exports", multiple=True)
-def search(chain, field, detail, export, role, header):
+@click.option("--sort", "-s", help="Sort by (-)field")
+def search(chain, field, detail, export, role, header, sort):
     """Retrieve resources from database"""
     repository = TinyDbDatasetRepository(DATABASE)
-    results = repository.search(field=field, value=chain)
+    data = repository.search(field=field, value=chain)
+    results = sort_by_field(data=data, field=sort)
     headers = list(header) if len(header) != 0 else choose_headers(role=role)
     output_results(results=results, detail=detail)
     if export:
@@ -185,9 +186,10 @@ def database_get_dataset(name):
 @database.command("export")
 @click.option("--exclude-not-published", is_flag=True, help="Exclude not published datasets")
 @click.option("--exclude-restricted", is_flag=True, help="Exclude restricted datasets")
-@click.option("--quality", is_flag=True, default=None, help="Add quality items")
-@click.option("--role", default="admin", help="Public for export", type=click.Choice(['admin', 'user']))
-def export_to_csv(exclude_not_published, exclude_restricted, quality, role):
+@click.option("--quality", "-q", is_flag=True, default=None, help="Add quality items")
+@click.option("--role", "-r", default="admin", help="Public for export", type=click.Choice(['admin', 'user']))
+@click.option("--sort", "-s", help="Sort by (-)field")
+def export_to_csv(exclude_not_published, exclude_restricted, quality, role, sort):
     """Append new datasets to database"""
     repository = TinyDbDatasetRepository(DATABASE)
     query_builder = repository.builder
@@ -197,10 +199,11 @@ def export_to_csv(exclude_not_published, exclude_restricted, quality, role):
     if exclude_restricted:
         query_builder.add_filter("restricted", "==", "False")
     datasets = repository.query()
+    results = sort_by_field(data=datasets, field=sort)
     print(f"Datasets: {len(datasets)}")
     output_opts = f"-catalog{'-published' if exclude_not_published else ''}{'-not-restricted' if exclude_restricted else ''}"
     filename = format_filename(f"datasets{output_opts}.csv", "data")
-    to_csv(report=datasets, filename=filename, headers=headers)
+    to_csv(report=results, filename=filename, headers=headers)
 
 
 @cli.group("resources")

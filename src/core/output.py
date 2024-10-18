@@ -1,5 +1,6 @@
 import csv
 import json
+from operator import itemgetter
 
 from colorama import Fore
 
@@ -33,6 +34,19 @@ def choose_headers(role, custom: list = None):
     if custom:
         headers.extend(custom)
     return headers
+
+
+def sort_by_field(data, field):
+    if not field:
+        return data
+    reverse = True if field is not None and "-" in field else False
+    try:
+        null_fields_handler = [{k: (0 if v is None else v) for k, v in d.items()} for d in data]
+        results = sorted(null_fields_handler, key=itemgetter(field.replace("-", "")), reverse=reverse)
+    except TypeError:
+        null_fields_handler = [{k: ('' if v is None else v) for k, v in d.items()} for d in data]
+        results = sorted(null_fields_handler, key=itemgetter(field.replace("-", "")), reverse=reverse)
+    return results
 
 
 def to_csv(report: list, filename: str = FORMATTED_DATASETS_LIST, headers: list = None):

@@ -37,7 +37,7 @@ class Dataset:
         self.download_count = download_count
         self.api_call_count = api_call_count
         self.popularity_score = popularity_score
-        self.records_size = records_size
+        self.records_size = int(records_size)
         self.size = size
         self.records_count = records_count
         self.link = link
