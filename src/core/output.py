@@ -1,7 +1,9 @@
 import csv
 import json
 
-from core.configuration import FORMATTED_DATASETS_LIST
+from colorama import Fore
+
+from core.configuration import FORMATTED_DATASETS_LIST, ADMIN_HEADERS, PUBLIC_HEADERS
 
 
 def response_to_json(response):
@@ -18,7 +20,15 @@ def pprint(response):
 def to_json(response, filename: str):
     with open(filename, "w") as file:
         json.dump(response, file, indent=2, ensure_ascii=False)
-    print(f"File {filename} has been created!")
+    print(Fore.GREEN, f"File {filename} has been created!")
+
+
+def choose_headers(role):
+    match role:
+        case "admin":
+            return ADMIN_HEADERS
+        case "user":
+            return PUBLIC_HEADERS
 
 
 def to_csv(report: list, filename: str = FORMATTED_DATASETS_LIST, headers: list = None):
@@ -26,4 +36,4 @@ def to_csv(report: list, filename: str = FORMATTED_DATASETS_LIST, headers: list 
         writer = csv.DictWriter(f=output, fieldnames=headers, delimiter=";", extrasaction="ignore")
         writer.writeheader()
         writer.writerows(report)
-    print(f"{filename} has been created.")
+    print(Fore.GREEN, f"File {filename} has been created.")

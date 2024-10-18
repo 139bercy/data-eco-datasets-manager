@@ -37,6 +37,9 @@ class DatasetCsvRepository(AbstractDatasetRepository):
 
 
 class DatasetApiRepository(AbstractDatasetRepository):
+    def upsert(self, dataset):
+        raise NotImplementedError
+
     def get_all(self):
         response = query_ods(f"{DOMAIN_NAME}/api/automation/v1.0/datasets/", params={"limit": 1000})
         return response

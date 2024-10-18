@@ -10,10 +10,25 @@ HEADERS = {"Authorization": f"Apikey {os.environ['KEY']}"}
 DOMAIN_NAME = os.environ["DOMAIN_NAME"]
 RAW_DATASETS_PATH = format_filename("datasets.json", "data")
 FORMATTED_DATASETS_LIST = format_filename("datasets.csv", "data")
+DATABASE = os.environ["DATABASE"]
 
-CUSTOM_HEADERS = [
+ADMIN_HEADERS = [
     "uid",
     "buid",
+    "created",
+    "updated",
+    "dataset_id",
+    "title",
+    "publisher",
+    "published",
+    "restricted",
+    "records_size",
+    "size",
+    "records_count",
+    "link",
+]
+
+PUBLIC_HEADERS = [
     "created",
     "updated",
     "dataset_id",
