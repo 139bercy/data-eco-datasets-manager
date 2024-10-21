@@ -90,11 +90,16 @@ def check_dataset_quality(name, output, no_dcat, source):
 
 
 @dataset.command("get-details")
+@click.option("--metas", "-m", default=None, type=click.Choice(["default", "dcat", "explore"]))
+@click.option("--output", "-o", default=False, is_flag=True)
 @click.argument("name")
-def get_details(name):
+def get_details(name, metas, output):
     """Export dedicated dataset details"""
-    data = get_dataset_from_api(name=name, output=True)
-    pprint(data)
+    data = get_dataset_from_api(name=name, output=output)
+    if metas:
+        pprint(data["results"][0]["metas"][metas])
+    else:
+        pprint(data["results"][0])
 
 
 @dataset.group("custom-view")
