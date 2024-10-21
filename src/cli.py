@@ -11,7 +11,7 @@ from adapters.api import (
     automation_api_dataset_dto,
     get_dataset_from_automation_api,
 )
-from adapters.usecases import create_dataset
+from adapters.usecases import create_dataset, search_resources
 from common import format_filename, make_bytes_size_human_readable
 from core.configuration import (
     RAW_DATASETS_PATH,
@@ -156,17 +156,6 @@ def upsert(dataset_id):
     pprint(dataset.__dict__)
 
 
-def output_results(results, detail):
-    if not results:
-        click.echo("No results available for this keyword.")
-        exit()
-    for result in results:
-        print(result["dataset_id"])
-        if detail:
-            pprint(result)
-    click.echo(click.style(f"Resources : {len(results)}", fg="yellow"))
-
-
 @database.command("publisher")
 def get_publishers():
     repository = TinyDbDatasetRepository(DATABASE)
@@ -190,28 +179,22 @@ def database_get_dataset(name):
 @cli.command("search")
 @click.argument("chain")
 @click.option("--field", "-f", default="dataset_id", help="Field for research")
-@click.option("--detail", "-d", is_flag=True, default=False, help="Print resources detail")
+@click.option("--detail", "-d", is_flag=True, default=False, help="Print resources details")
 @click.option("--export", "-e", is_flag=True, default=False, help="Export resources to csv")
-@click.option("--role", "-r", default="admin", help="Public for export", type=click.Choice(["admin", "user"]))
+@click.option("--role", "-r", default="user", help="Public for export", type=click.Choice(["admin", "user"]))
 @click.option("--header", "-h", help="Custom headers for exports", multiple=True)
 @click.option("--sort", "-s", help="Sort by (-)field")
 def search(chain, field, detail, export, role, header, sort):
     """Retrieve resources from database"""
     repository = TinyDbDatasetRepository(DATABASE)
-    data = repository.search(field=field, value=chain)
-    results = sort_by_field(data=data, field=sort)
-    headers = list(header) if len(header) != 0 else choose_headers(role=role)
-    output_results(results=results, detail=detail)
-    if export:
-        output = format_filename(f"datasets-{field}-{chain}.csv", "data")
-        to_csv(report=results, filename=output, headers=headers)
+    search_resources(chain, detail, export, field, header, repository, role, sort)
 
 
 @database.command("export")
 @click.option("--exclude-not-published", is_flag=True, help="Exclude not published datasets")
 @click.option("--exclude-restricted", is_flag=True, help="Exclude restricted datasets")
 @click.option("--quality", "-q", is_flag=True, default=None, help="Add quality items")
-@click.option("--role", "-r", default="admin", help="Public for export", type=click.Choice(["admin", "user"]))
+@click.option("--role", "-r", default="user", help="Public for export", type=click.Choice(["admin", "user"]))
 @click.option("--header", "-h", help="Custom headers for exports", multiple=True)
 @click.option("--sort", "-s", help="Sort by (-)field")
 def export_to_csv(exclude_not_published, exclude_restricted, quality, header, role, sort):

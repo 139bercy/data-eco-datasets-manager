@@ -55,3 +55,14 @@ def to_csv(report: list, filename: str = FORMATTED_DATASETS_LIST, headers: list 
         writer.writeheader()
         writer.writerows(report)
     print(Fore.GREEN, f"File {filename} has been created.")
+
+
+def output_results(results, detail):
+    if not results:
+        print(Fore.GREEN, "No results available for this keyword.")
+        exit()
+    for result in results:
+        print(result["dataset_id"])
+        if detail:
+            pprint(result)
+    print(Fore.YELLOW, f"Resources : {len(results)}")

@@ -56,9 +56,8 @@ with open(f"data/{filename}", "w") as report_file:
         params = {"where": f"dataset_id='{ds_id}'", "include_app_metas": True}
         data = query_ods(url=URL, params=params)
         stats_report = get_dataset_stats_report(data=data, pprint=False)
-        print(ds)
-        # ds_report = get_dataset_quality_score(data=data, dcat=DCAT, pprint=False)
-        # dataset = {**ds[1], **stats_report, **ds_report}
-        # dataset = create_dataset(repository=REPOSITORY, values=dataset)
-        # writer.writerow(dataset.__dict__)
-        # time.sleep(0.1)
+        ds_report = get_dataset_quality_score(data=data, dcat=DCAT, pprint=False)
+        dataset = {**ds[1], **stats_report, **ds_report}
+        dataset = create_dataset(repository=REPOSITORY, values=dataset)
+        writer.writerow(dataset.__dict__)
+        time.sleep(0.1)
