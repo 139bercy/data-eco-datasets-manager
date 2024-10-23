@@ -13,6 +13,7 @@ class Dataset:
         publisher: str,
         published: bool,
         restricted: bool,
+        attachments: dict = None,
         download_count: int = None,
         api_call_count: int = None,
         popularity_score: float = None,
@@ -34,6 +35,7 @@ class Dataset:
         self.publisher = publisher
         self.published = published
         self.restricted = restricted
+        self.attachments = attachments
         self.download_count = download_count
         self.api_call_count = api_call_count
         self.popularity_score = popularity_score

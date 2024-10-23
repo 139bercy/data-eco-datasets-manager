@@ -1,11 +1,15 @@
 import json
+from collections import defaultdict
+from operator import itemgetter
 
 import requests
 
 from common import make_bytes_size_human_readable
 from core.configuration import HEADERS, DOMAIN_NAME
 from core.exceptions import HTTPError
-from core.output import response_to_json, to_json
+from core.output import response_to_json, to_json, pprint
+
+import mimetypes
 
 
 def query_ods(url: str, params: dict):
@@ -40,6 +44,16 @@ def get_dataset_from_file():
         return data
 
 
+def get_attachments_files_extensions(files):
+    extensions = defaultdict(int)
+    for file in files:
+        extension = mimetypes.guess_extension(file["mimetype"]).replace(".", "")
+        extensions[extension] += 1
+    unpacked = [{"extension": key, "value": value} for key, value in dict(extensions).items()] if len(extensions) >= 1 else None
+    result = sorted(unpacked, key=itemgetter("extension"), reverse=False) if unpacked else None
+    return result
+
+
 def automation_api_dataset_dto(dataset: dict):
     dataset_report = {
         "uid": dataset["uid"],
@@ -57,6 +71,7 @@ def automation_api_dataset_dto(dataset: dict):
 def explore_api_dataset_dto(dataset: dict):
     records_size = dataset.get("metas", {}).get("processing", {}).get("records_size", None)
     dataset_report = {
+        "attachments": get_attachments_files_extensions(dataset.get("attachments", None)),
         "download_count": dataset.get("metas", {}).get("explore", {}).get("download_count", None),
         "api_call_count": dataset.get("metas", {}).get("explore", {}).get("api_call_count", None),
         "popularity_score": dataset.get("metas", {}).get("explore", {}).get("popularity_score", None),

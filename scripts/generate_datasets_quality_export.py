@@ -36,6 +36,7 @@ with open(f"data/{filename}", "w") as report_file:
         "publisher",
         "published",
         "restricted",
+        "attachments",
         "download_count",
         "records_size",
         "size",
@@ -60,4 +61,4 @@ with open(f"data/{filename}", "w") as report_file:
         dataset = {**ds[1], **stats_report, **ds_report}
         dataset = create_dataset(repository=REPOSITORY, values=dataset)
         writer.writerow(dataset.__dict__)
-        time.sleep(0.1)
+        # time.sleep(0.1)

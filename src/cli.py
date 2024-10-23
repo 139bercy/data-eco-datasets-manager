@@ -1,6 +1,7 @@
 import csv
 import json
 import time
+from collections import defaultdict
 
 import click
 
@@ -9,7 +10,7 @@ from adapters.api import (
     get_dataset_from_file,
     query_ods,
     automation_api_dataset_dto,
-    get_dataset_from_automation_api,
+    get_dataset_from_automation_api, get_attachments_files_extensions,
 )
 from adapters.usecases import create_dataset, search_resources
 from common import format_filename, make_bytes_size_human_readable
@@ -91,15 +92,19 @@ def check_dataset_quality(name, output, no_dcat, source):
 
 @dataset.command("get-details")
 @click.option("--metas", "-m", default=None, type=click.Choice(["default", "dcat", "explore"]))
-@click.option("--output", "-o", default=False, is_flag=True)
+@click.option("--attachments", "-a", is_flag=True, default=None)
+@click.option("--output", "-o", is_flag=True, default=False)
 @click.argument("name")
-def get_details(name, metas, output):
+def get_details(name, metas, attachments, output):
     """Export dedicated dataset details"""
     data = get_dataset_from_api(name=name, output=output)
     if metas:
         pprint(data["results"][0]["metas"][metas])
+    if attachments:
+        extensions = get_attachments_files_extensions(files=data["results"][0]["attachments"])
+        pprint(extensions)
     else:
-        pprint(data["results"][0])
+        print(data["results"][0].keys())
 
 
 @dataset.group("custom-view")
@@ -214,6 +219,7 @@ def export_to_csv(exclude_not_published, exclude_restricted, quality, header, ro
     if exclude_restricted:
         query_builder.add_filter("restricted", "==", "False")
     datasets = repository.query()
+    zzz = []
     results = sort_by_field(data=datasets, field=sort)
     print(f"Datasets: {len(datasets)}")
     output_opts = (
