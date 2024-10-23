@@ -19,7 +19,7 @@ def test_add_base_dataset_to_tinydb_repository(dataset_fixture, tiny_db_reposito
     create_dataset(repository=tiny_db_repository, values=dataset_fixture)
     # Assert
     query = Query()
-    results = tiny_db_repository.db.search(query.dataset_id == "my-dataset")
+    results = tiny_db_repository.datasets.search(query.dataset_id == "my-dataset")
     assert results[0]["dataset_id"] == "my-dataset"
 
 
@@ -39,7 +39,7 @@ def test_add_data_to_existing_dataset(dataset_fixture, dataset_update_fixture, t
     enrich_dataset(repository=tiny_db_repository, dataset=dataset, new_dataset=dataset_update_fixture)
     # Assert
     query = Query()
-    results = tiny_db_repository.db.search(query.dataset_id == "my-dataset")
+    results = tiny_db_repository.datasets.search(query.dataset_id == "my-dataset")
     assert results[0]["dataset_id"] == "my-dataset"
     assert results[0]["download_count"] == 100
 
