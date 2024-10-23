@@ -1,11 +1,10 @@
 import csv
-import time
 
-from adapters.api import query_ods
-from adapters.usecases import create_dataset
+from core.api import query_ods
+from datasets.usecases import create_dataset
 from common import format_filename
 from core.configuration import FORMATTED_DATASETS_LIST, DOMAIN_NAME
-from infrastructure.repositories import TinyDbDatasetRepository
+from datasets.repositories import TinyDbDatasetRepository
 from services.quality import get_dataset_quality_score
 from services.stats import get_dataset_stats_report
 

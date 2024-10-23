@@ -1,7 +1,7 @@
 import copy
 
-from adapters.api import explore_api_dataset_dto
-from adapters.exceptions import DatasetInconsistencyError
+from datasets.api import explore_api_dataset_dto
+from core.exceptions import DatasetInconsistencyError
 from common import format_filename
 from core.models import Dataset
 from core.output import sort_by_field, choose_headers, to_csv, output_results

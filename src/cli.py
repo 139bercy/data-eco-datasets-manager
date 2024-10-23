@@ -4,14 +4,12 @@ import time
 
 import click
 
-from adapters.api import (
-    get_dataset_from_api,
-    get_dataset_from_file,
+from core.api import (
     query_ods,
-    automation_api_dataset_dto,
-    get_dataset_from_automation_api, get_attachments_files_extensions,
 )
-from adapters.usecases import create_dataset, search_resources
+from datasets.api import get_dataset_from_api, get_dataset_from_automation_api, get_dataset_from_file, \
+    get_attachments_files_extensions, automation_api_dataset_dto
+from datasets.usecases import create_dataset, search_resources
 from common import format_filename, make_bytes_size_human_readable
 from core.configuration import (
     RAW_DATASETS_PATH,
@@ -22,7 +20,7 @@ from core.configuration import (
     DATABASE,
 )
 from core.output import to_json, to_csv, pprint, choose_headers, sort_by_field
-from infrastructure.repositories import TinyDbDatasetRepository
+from datasets.repositories import TinyDbDatasetRepository
 from services import security
 from services.community import add_community_custom_view
 from services.publications import unpublish, publish
@@ -169,7 +167,7 @@ def db_import_users():
 @click.argument("dataset-id")
 def upsert(dataset_id):
     repository = TinyDbDatasetRepository(DATABASE)
-    data = repository.get_one(dataset_id=dataset_id)
+    data = repository.one(dataset_id=dataset_id)
 
     automation_response = get_dataset_from_automation_api(dataset_uid=data.uid, output=False)
     automation_dto = automation_api_dataset_dto(automation_response)
@@ -186,7 +184,7 @@ def upsert(dataset_id):
 @database.command("publisher")
 def get_publishers():
     repository = TinyDbDatasetRepository(DATABASE)
-    data = repository.get_all()
+    data = repository.all()
     results = list(set([dataset["publisher"] for dataset in data]))
     results.sort()
     for result in results:
@@ -198,7 +196,7 @@ def get_publishers():
 def database_get_dataset(name):
     """Get intel on one dataset"""
     repository = TinyDbDatasetRepository(DATABASE)
-    result = repository.get_one(dataset_id=name)
+    result = repository.one(dataset_id=name)
     formatted = json.dumps(result.__dict__, indent=2, ensure_ascii=False)
     click.echo(formatted)
 

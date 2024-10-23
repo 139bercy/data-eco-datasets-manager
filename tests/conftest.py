@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from infrastructure.repositories import TinyDbDatasetRepository
+from datasets.repositories import TinyDbDatasetRepository
 
 os.environ["APP_ENV"] = "test"
 

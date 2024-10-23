@@ -22,7 +22,7 @@ def test_update_user(users_fixture):
     # Act
     repository.update(username="john.doe", values=updated)
     # Assert
-    user = repository.get_one(username="john.doe")
+    user = repository.one(username="john.doe")
     assert len(repository.db) == 1
     assert user.buid == "c0c10d06"
     assert user.last_seen_at == "2024-01-02T12:00:00Z"
@@ -36,7 +36,7 @@ def test_upsert_user(users_fixture):
     # Act
     repository.upsert(user=user)
     # Assert
-    user = repository.get_one(username="john.doe")
+    user = repository.one(username="john.doe")
     assert len(repository.db) == 1
     assert user.last_seen_at == "2024-01-02T12:00:00Z"
 

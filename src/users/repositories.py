@@ -1,18 +1,19 @@
 from tinydb import TinyDB, Query
 
-from infrastructure.builder import TinyDBQueryBuilder
-from infrastructure.exceptions import ExistingRecordError
+from core.gateways import AbstractUsersRepository
+from core.builder import TinyDBQueryBuilder
+from core.exceptions import ExistingRecordError
 from users.models import User
 
 
-class InMemoryUsersRepository:
+class InMemoryUsersRepository(AbstractUsersRepository):
     def __init__(self, db: list):
         self.db = db
 
-    def get_all(self):
-        raise NotImplementedError
+    def all(self):
+        return self.db
 
-    def get_one(self, username: str):
+    def one(self, username: str):
         user = next((user for user in self.db if user.username == username), None)
         return user
 
@@ -44,7 +45,7 @@ class InMemoryUsersRepository:
         return True
 
 
-class TinyDbUserRepository:
+class TinyDbUserRepository(AbstractUsersRepository):
     def __init__(self, name):
         self.name = name
         self.db = TinyDB(name, indent=2, ensure_ascii=False)

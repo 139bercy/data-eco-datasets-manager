@@ -2,11 +2,11 @@ import json
 
 import pytest
 
-from adapters.api import explore_api_dataset_dto
-from adapters.usecases import create_dataset, enrich_dataset
-from adapters.exceptions import DatasetInconsistencyError
+from datasets.api import explore_api_dataset_dto
+from datasets.usecases import create_dataset, enrich_dataset
+from core.exceptions import DatasetInconsistencyError
 from common import make_bytes_size_human_readable
-from infrastructure.repositories import InMemoryDatasetRepository
+from datasets.repositories import InMemoryDatasetRepository
 
 
 def test_should_add_data_to_existing_dataset(dataset_fixture):

@@ -1,8 +1,8 @@
 from tinydb import Query
 
-from adapters.usecases import create_dataset, enrich_dataset
+from datasets.usecases import create_dataset, enrich_dataset
 from core.models import Dataset
-from infrastructure.repositories import InMemoryDatasetRepository
+from datasets.repositories import InMemoryDatasetRepository
 
 
 def test_add_dataset_to_in_memory_repository(dataset_fixture):
@@ -27,7 +27,7 @@ def test_get_one_tiny_db_record(dataset_fixture, tiny_db_repository):
     # Arrange
     create_dataset(repository=tiny_db_repository, values=dataset_fixture)
     # Act
-    result = tiny_db_repository.get_one(dataset_id="my-dataset")
+    result = tiny_db_repository.one(dataset_id="my-dataset")
     # Assert
     assert isinstance(result, Dataset)
 
@@ -68,5 +68,5 @@ def test_dataset_id_should_be_unique(dataset_fixture, tiny_db_repository):
     # Act
     create_dataset(repository=tiny_db_repository, values=dataset_fixture)
     # Assert
-    datasets = tiny_db_repository.get_all()
+    datasets = tiny_db_repository.all()
     assert len(datasets) == 1

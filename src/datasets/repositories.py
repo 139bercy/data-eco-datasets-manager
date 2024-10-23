@@ -4,8 +4,8 @@ from tinydb import TinyDB, Query
 
 from core.gateways import AbstractDatasetRepository
 from core.models import Dataset
-from infrastructure.exceptions import DatabaseDeletionError, ExistingRecordError
-from infrastructure.builder import TinyDBQueryBuilder
+from core.exceptions import DatabaseDeletionError, ExistingRecordError
+from core.builder import TinyDBQueryBuilder
 
 
 def type_value(value):
@@ -19,10 +19,10 @@ class InMemoryDatasetRepository(AbstractDatasetRepository):
     def __init__(self, db):
         self.db = db
 
-    def get_all(self):
+    def all(self):
         raise NotImplementedError
 
-    def get_one(self, dataset_id: str):
+    def one(self, dataset_id: str):
         raise NotImplementedError
 
     def add(self, dataset: Dataset):
@@ -56,10 +56,10 @@ class TinyDbDatasetRepository(AbstractDatasetRepository):
             return False
         return True
 
-    def get_all(self):
+    def all(self):
         return self.db.all()
 
-    def get_one(self, dataset_id: str):
+    def one(self, dataset_id: str):
         query = Query()
         result = self.db.search(query.dataset_id == dataset_id)[0]
         dataset = Dataset(**result)

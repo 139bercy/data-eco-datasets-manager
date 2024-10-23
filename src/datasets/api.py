@@ -1,24 +1,12 @@
 import json
-from collections import defaultdict
-from operator import itemgetter
-
-import requests
-
-from common import make_bytes_size_human_readable
-from core.configuration import HEADERS, DOMAIN_NAME
-from core.exceptions import HTTPError
-from core.output import response_to_json, to_json, pprint
-
 import mimetypes
+from _operator import itemgetter
+from collections import defaultdict
 
-
-def query_ods(url: str, params: dict):
-    response = requests.get(url, headers=HEADERS, params=params)
-    if response.status_code == 200:
-        output = response_to_json(response=response)
-        return output
-    else:
-        raise HTTPError
+from core.api import query_ods
+from common import make_bytes_size_human_readable
+from core.configuration import DOMAIN_NAME
+from core.output import to_json
 
 
 def get_dataset_from_api(name: str, output: bool):

@@ -1,9 +1,9 @@
 import requests_mock
 
-from adapters.primaries import DatasetCsvRepository, DatasetApiRepository
-from adapters.usecases import create_dataset, enrich_dataset
+from datasets.primaries import DatasetCsvRepository, DatasetApiRepository
+from datasets.usecases import create_dataset, enrich_dataset
 from core.configuration import DOMAIN_NAME
-from infrastructure.repositories import InMemoryDatasetRepository
+from datasets.repositories import InMemoryDatasetRepository
 
 
 def test_should_retrieve_a_list_of_datasets_from_csv():
@@ -11,7 +11,7 @@ def test_should_retrieve_a_list_of_datasets_from_csv():
     repository = DatasetCsvRepository("datasets.csv")
     repository.path = "tests/fixtures/"
     # Act
-    datasets = repository.get_all()
+    datasets = repository.all()
     # Assert
     assert len(datasets) == 3
 
@@ -22,7 +22,7 @@ def test_should_retrieve_one_dataset_from_csv():
     repository.path = "tests/fixtures/"
     dataset_id = "test-dataset-1"
     # Act
-    dataset = repository.get_one(dataset_id=dataset_id)
+    dataset = repository.one(dataset_id=dataset_id)
     # Assert
     assert dataset["dataset_id"] == dataset_id
 
@@ -35,7 +35,7 @@ def test_should_retrieve_a_list_of_datasets_from_api():
     # Act
     with requests_mock.Mocker() as m:
         m.get(f"{DOMAIN_NAME}/api/automation/v1.0/datasets/", text=content)
-        datasets = repository.get_all()
+        datasets = repository.all()
     # Assert
     assert datasets["total_count"] == 3
 
@@ -48,7 +48,7 @@ def test_should_retrieve_one_dataset_from_api():
     # Act
     with requests_mock.Mocker() as m:
         m.get(f"{DOMAIN_NAME}/api/explore/v2.1/catalog/datasets/", text=content)
-        datasets = repository.get_one("test-dataset-1")
+        datasets = repository.one("test-dataset-1")
     # Assert
     assert datasets["total_count"] == 1
 

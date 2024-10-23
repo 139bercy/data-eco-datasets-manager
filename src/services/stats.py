@@ -1,4 +1,4 @@
-from adapters.api import explore_api_dataset_dto
+from datasets.api import explore_api_dataset_dto
 
 
 def handle_no_dataset_case():
