@@ -50,7 +50,7 @@ class TinyDbUserRepository(AbstractUsersRepository):
         self.name = name
         self.db = TinyDB(name, indent=2, ensure_ascii=False)
         self.builder = TinyDBQueryBuilder(db=self.db)
-        self.users = self.db.table('users')
+        self.users = self.db.table("users")
 
     def all(self):
         return self.users.all()

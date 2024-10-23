@@ -14,7 +14,7 @@ class User:
         is_active: bool = True,
         joined_at: str = None,
         last_seen_at: str = None,
-        last_login_at: str = None
+        last_login_at: str = None,
     ):
         self.buid = buid
         self.username = username
@@ -39,7 +39,7 @@ class User:
         groups: list = None,
         is_active: bool = None,
         last_seen_at: str = None,
-        last_login_at: str = None
+        last_login_at: str = None,
     ):
         if permissions is not None:
             self.permissions = permissions

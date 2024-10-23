@@ -55,7 +55,7 @@ def users_fixture():
         "last_seen_at": "2024-01-01T12:00:00Z",
         "expires_at": None,
         "last_login_at": "2024-01-01T12:00:00Z",
-        }
+    }
 
 
 @pytest.fixture

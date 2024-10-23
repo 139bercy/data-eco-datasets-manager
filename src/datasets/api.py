@@ -1,6 +1,6 @@
 import json
 import mimetypes
-from _operator import itemgetter
+from operator import itemgetter
 from collections import defaultdict
 
 from core.api import query_ods
@@ -39,7 +39,11 @@ def get_attachments_files_extensions(files):
     for file in files:
         extension = mimetypes.guess_extension(file["mimetype"]).replace(".", "")
         extensions[extension] += 1
-    unpacked = [{"extension": key, "value": value} for key, value in dict(extensions).items()] if len(extensions) >= 1 else None
+    unpacked = (
+        [{"extension": key, "value": value} for key, value in dict(extensions).items()]
+        if len(extensions) >= 1
+        else None
+    )
     result = sorted(unpacked, key=itemgetter("extension"), reverse=False) if unpacked else None
     return result
 

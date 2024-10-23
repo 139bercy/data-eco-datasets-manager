@@ -8,8 +8,13 @@ import click
 from core.api import (
     query_ods,
 )
-from datasets.api import get_dataset_from_api, get_dataset_from_automation_api, get_dataset_from_file, \
-    get_attachments_files_extensions, automation_api_dataset_dto
+from datasets.api import (
+    get_dataset_from_api,
+    get_dataset_from_automation_api,
+    get_dataset_from_file,
+    get_attachments_files_extensions,
+    automation_api_dataset_dto,
+)
 from datasets.usecases import create_dataset, search_resources
 from common import format_filename, make_bytes_size_human_readable
 from core.configuration import (
@@ -103,7 +108,7 @@ def download():
 @click.option("--output", "-o", is_flag=True, default=False)
 @click.argument("name")
 def get_details(name, metas, attachments, output):
-    """Get dedicated dataset details. See options. """
+    """Get dedicated dataset details. See options."""
     data = get_dataset_from_api(name=name, output=output)
     if metas:
         pprint(data["results"][0]["metas"][metas])

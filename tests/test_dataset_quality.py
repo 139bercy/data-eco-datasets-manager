@@ -19,7 +19,7 @@ def dataset():
                     "default": {"field1": True, "field2": None},
                     "dcat": {"field1": True, "field2": True},
                 },
-                "attachments": [{"mimetype": "application/pdf", "title": "file-title.pdf"}]
+                "attachments": [{"mimetype": "application/pdf", "title": "file-title.pdf"}],
             }
         ],
     }

@@ -44,7 +44,7 @@ def sort_by_field(data, field):
         null_fields_handler = [{k: (0 if v is None else v) for k, v in d.items()} for d in data]
         results = sorted(null_fields_handler, key=itemgetter(field.replace("-", "")), reverse=reverse)
     except TypeError:
-        null_fields_handler = [{k: ('' if v is None else v) for k, v in d.items()} for d in data]
+        null_fields_handler = [{k: ("" if v is None else v) for k, v in d.items()} for d in data]
         results = sorted(null_fields_handler, key=itemgetter(field.replace("-", "")), reverse=reverse)
     return results
 

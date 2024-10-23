@@ -51,7 +51,7 @@ def test_explore_empty_values_should_return_none():
         "size": None,
         "records_count": None,
         "attachments": [],
-        "link": "https://data.economie.gouv.fr/explore/dataset/my-dataset"
+        "link": "https://data.economie.gouv.fr/explore/dataset/my-dataset",
     }
     # Act
     result = explore_api_dataset_dto({"dataset_id": "my-dataset"})
