@@ -51,7 +51,7 @@ def sort_by_field(data, field):
 
 def to_csv(report: list, filename: str = FORMATTED_DATASETS_LIST, headers: list = None):
     with open(filename, "w") as output:
-        writer = csv.DictWriter(f=output, fieldnames=headers, delimiter=";", extrasaction="ignore")
+        writer = csv.DictWriter(f=output, fieldnames=headers, delimiter=";", extrasaction="ignore", quotechar='"', quoting=csv.QUOTE_ALL)
         writer.writeheader()
         writer.writerows(report)
     print(Fore.GREEN, f"File {filename} has been created.")

@@ -1,6 +1,7 @@
 import csv
 import json
 import time
+from operator import itemgetter
 
 import click
 
@@ -28,6 +29,7 @@ from services.quality import get_dataset_quality_score
 from services.stats import get_dataset_stats_report
 from users.repositories import TinyDbUserRepository
 from users.usecases import create_user
+from users.api import get_all_users_from_api
 
 
 @click.group()
@@ -147,22 +149,6 @@ def database():
     """Database management"""
 
 
-@database.group("users")
-def db_users():
-    """Manage users in database"""
-
-
-@db_users.command("import")
-def db_import_users():
-    repository = TinyDbUserRepository(DATABASE)
-    with open("data/users.json", "r") as file:
-        users = json.load(file)["results"]
-        for user in users:
-            create_user(repository=repository, user=user)
-    users = repository.all()
-    click.echo(click.style(f"{len(users)} users have been imported to database {DATABASE}", fg="green"))
-
-
 @database.command("upsert")
 @click.argument("dataset-id")
 def upsert(dataset_id):
@@ -179,16 +165,6 @@ def upsert(dataset_id):
 
     dataset = create_dataset(repository=repository, values=result)
     pprint(dataset.__dict__)
-
-
-@database.command("publisher")
-def get_publishers():
-    repository = TinyDbDatasetRepository(DATABASE)
-    data = repository.all()
-    results = list(set([dataset["publisher"] for dataset in data]))
-    results.sort()
-    for result in results:
-        print(result)
 
 
 @database.command("get")
@@ -210,7 +186,7 @@ def database_get_dataset(name):
 @click.option("--header", "-h", help="Custom headers for exports", multiple=True)
 @click.option("--sort", "-s", help="Sort by (-)field")
 def search(chain, field, detail, export, role, header, sort):
-    """Retrieve resources from database"""
+    """Retrieve datasets from database"""
     repository = TinyDbDatasetRepository(DATABASE)
     search_resources(chain, detail, export, field, header, repository, role, sort)
 
@@ -234,7 +210,6 @@ def export_to_csv(exclude_not_published, exclude_restricted, quality, header, ro
     if exclude_restricted:
         query_builder.add_filter("restricted", "==", "False")
     datasets = repository.query()
-    zzz = []
     results = sort_by_field(data=datasets, field=sort)
     print(f"Datasets: {len(datasets)}")
     output_opts = (
@@ -246,25 +221,43 @@ def export_to_csv(exclude_not_published, exclude_restricted, quality, header, ro
 
 @cli.group("resources")
 def resources():
-    """Resources management"""
+    """Manage groups and publishers"""
 
 
-@resources.group("users")
+@resources.command("publishers")
+@click.option("--output", "-o", is_flag=True, default=False, help="Export in csv")
+def get_publishers(output):
+    """Get publishers list"""
+    repository = TinyDbDatasetRepository(DATABASE)
+    data = repository.all()
+    results = list([{"publisher": publisher} for publisher in set([dataset["publisher"] for dataset in data])])
+    report = sorted(results, key=itemgetter("publisher"))
+    if output:
+        filename = format_filename(filename="publishers.csv", directory="data")
+        to_csv(report=report, filename=filename, headers=["publisher"])
+    else:
+        for publisher in report:
+            print(publisher["publisher"])
+
+
+@cli.group("user")
 def user_resources():
     """Users management"""
 
 
-@user_resources.command("download")
-def search_users():
-    """Add users to database"""
-    # users = security.get_all_users_from_api()
-    with open("users.json", "r") as file:
-        users = json.load(file)["results"]
+@user_resources.command("import")
+def db_import_users():
+    repository = TinyDbUserRepository(DATABASE)
+    users = get_all_users_from_api()
+    for user in users:
+        create_user(repository=repository, user=user)
+    click.echo(click.style(f"{len(users)} users have been imported to database {DATABASE}", fg="green"))
 
 
 @user_resources.command("export")
 def export_users_to_csv():
     """Export users and permissions to csv"""
+    # /!\ Les ressources sont exportées directement en CSV par ODS
     data = security.get_users()
     headers = data[0].keys()
     filename = format_filename(f"users.csv", "data")
