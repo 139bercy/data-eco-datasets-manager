@@ -61,6 +61,16 @@ class TinyDbUserRepository(AbstractUsersRepository):
         dataset = User(**result)
         return dataset
 
+    def search(self, field, value):
+        query = Query()
+        if field == "groups":
+            results = self.users.search(query.groups.any(Query().uid.test(lambda v: value in v)))
+        else:
+            results = self.users.search(query[field].search(value))
+        if len(results) >= 1:
+            return results
+        return None
+
     def is_unique(self, username):
         index = {value["username"] for value in self.users.all()}
         result = next((dsid for dsid in index if dsid == username), None)

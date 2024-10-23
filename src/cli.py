@@ -37,10 +37,6 @@ def cli():
     """Application CLI"""
 
 
-##############################
-# DATASETS
-##############################
-
 @cli.group("dataset")
 def dataset():
     """Dataset management"""
@@ -69,7 +65,8 @@ def upsert(dataset_id):
 @click.option("-d", "--input-file-date", help="Input dataset file filled date")
 @click.option("--exclude-not-published", is_flag=True, help="Exclude not published datasets")
 @click.option("--exclude-restricted", is_flag=True, help="Exclude restricted datasets")
-def export_to_csv(input_file_date, exclude_not_published, exclude_restricted):
+@click.option("--quotes", "-q", is_flag=True, default=False, help="Output with quotes on CSV fields")
+def export_to_csv(input_file_date, exclude_not_published, exclude_restricted, quotes):
     """Export datasets list in csv file"""
     filename = format_filename(filename=f"datasets.json", directory="data", date=input_file_date)
     report = []
@@ -85,12 +82,7 @@ def export_to_csv(input_file_date, exclude_not_published, exclude_restricted):
         report.append(dataset_report)
     output_opts = f"{'-published' if exclude_not_published else ''}{'-not-restricted' if exclude_restricted else ''}"
     output = format_filename(f"datasets{output_opts}.csv", "data")
-    to_csv(report=report, filename=output, headers=ADMIN_HEADERS)
-
-
-##############################
-# Dataset API
-##############################
+    to_csv(report=report, filename=output, headers=ADMIN_HEADERS, quotes=quotes)
 
 
 @dataset.group("api")
@@ -187,10 +179,6 @@ def add_custom_view(file):
             add_community_custom_view(dataset_uid=uid)
 
 
-##############################
-# DATABASE
-##############################
-
 @cli.group("database")
 def database():
     """Database management"""
@@ -203,7 +191,8 @@ def database():
 @click.option("--role", "-r", default="user", help="Public for export", type=click.Choice(["admin", "user"]))
 @click.option("--header", "-h", help="Custom headers for exports", multiple=True)
 @click.option("--sort", "-s", help="Sort by (-)field")
-def export_to_csv(exclude_not_published, exclude_restricted, quality, header, role, sort):
+@click.option("--quotes", "-q", is_flag=True, default=False, help="Output with quotes on CSV fields")
+def export_to_csv(exclude_not_published, exclude_restricted, quality, header, role, sort, quotes):
     """Append new datasets to database"""
     repository = TinyDbDatasetRepository(DATABASE)
     query_builder = repository.builder
@@ -231,7 +220,8 @@ def resources():
 
 @resources.command("publishers")
 @click.option("--output", "-o", is_flag=True, default=False, help="Export in csv")
-def get_publishers(output):
+@click.option("--quotes", "-q", is_flag=True, default=False, help="Output with quotes on CSV fields")
+def get_publishers(output, quotes):
     """Get publishers list"""
     repository = TinyDbDatasetRepository(DATABASE)
     data = repository.all()
@@ -239,7 +229,7 @@ def get_publishers(output):
     report = sorted(results, key=itemgetter("publisher"))
     if output:
         filename = format_filename(filename="publishers.csv", directory="data")
-        to_csv(report=report, filename=filename, headers=["publisher"])
+        to_csv(report=report, filename=filename, headers=["publisher"], quotes=quotes)
     else:
         for publisher in report:
             print(publisher["publisher"])
@@ -260,13 +250,31 @@ def db_import_users():
 
 
 @user_resources.command("export")
-def export_users_to_csv():
+@click.option("--quotes", "-q", is_flag=True, default=False, help="Output with quotes on CSV fields")
+def export_users_to_csv(quotes):
     """Export users and permissions to csv"""
     # /!\ Les ressources sont exportées directement en CSV par ODS
     data = security.get_users()
     headers = data[0].keys()
     filename = format_filename(f"users.csv", "data")
-    to_csv(report=data, filename=filename, headers=headers)
+    to_csv(report=data, filename=filename, headers=headers, quotes=quotes)
+
+
+@user_resources.command("search")
+@click.argument("chain")
+@click.option("--field", "-f", default="username", help="Field for research")
+@click.option("--detail", "-d", is_flag=True, default=False, help="Print resources details")
+@click.option("--export", "-e", is_flag=True, default=False, help="Export resources to csv")
+@click.option("--header", "-h", help="Custom headers for exports", multiple=True)
+@click.option("--sort", "-s", help="Sort by (-)field")
+@click.option("--quotes", "-q", is_flag=True, default=False, help="Output with quotes on CSV fields")
+def search_users(chain, field, detail, export, header, sort, quotes):
+    repository = TinyDbUserRepository(DATABASE)
+    results = search_resources(chain=chain, detail=detail, field=field, repository=repository, sort=sort)
+    headers = list(header) if len(header) != 0 else results[0].keys()
+    if export:
+        output = format_filename(f"users-{field}-{chain}.csv", "data")
+        to_csv(report=results, filename=output, headers=headers, quotes=quotes)
 
 
 @resources.group("groups")
@@ -275,7 +283,8 @@ def groups():
 
 
 @groups.command("get")
-def export_groups_to_csv():
+@click.option("--quotes", "-q", is_flag=True, default=False, help="Output with quotes on CSV fields")
+def export_groups_to_csv(quotes):
     """Export groups and permissions to csv"""
     data = security.get_groups()
     headers = [
@@ -290,7 +299,7 @@ def export_groups_to_csv():
         "user_count",
     ]
     filename = format_filename(f"groups.csv", "data")
-    to_csv(report=data, filename=filename, headers=headers)
+    to_csv(report=data, filename=filename, headers=headers, quotes=quotes)
 
 
 @groups.command("permissions")
@@ -320,7 +329,12 @@ def convert_size(bytes):
 @click.option("--role", "-r", default="user", help="Public for export", type=click.Choice(["admin", "user"]))
 @click.option("--header", "-h", help="Custom headers for exports", multiple=True)
 @click.option("--sort", "-s", help="Sort by (-)field")
-def search(chain, field, detail, export, role, header, sort):
+@click.option("--quotes", "-q", is_flag=True, default=False, help="Output with quotes on CSV fields")
+def search(chain, field, detail, export, role, header, sort, quotes):
     """Retrieve datasets from database"""
     repository = TinyDbDatasetRepository(DATABASE)
-    search_resources(chain, detail, export, field, header, repository, role, sort)
+    headers = list(header) if len(header) != 0 else choose_headers(role=role)
+    results = search_resources(chain=chain, detail=detail, field=field, repository=repository, sort=sort)
+    if export:
+        output = format_filename(f"datasets-{field}-{chain}.csv", "data")
+        to_csv(report=results, filename=output, headers=headers, quotes=quotes)

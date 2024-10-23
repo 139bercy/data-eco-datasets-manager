@@ -49,9 +49,10 @@ def sort_by_field(data, field):
     return results
 
 
-def to_csv(report: list, filename: str = FORMATTED_DATASETS_LIST, headers: list = None):
+def to_csv(report: list, filename: str = FORMATTED_DATASETS_LIST, headers: list = None, quotes=False):
+    opts = {"quotechar": '"', "quoting": csv.QUOTE_ALL} if quotes else {}
     with open(filename, "w") as output:
-        writer = csv.DictWriter(f=output, fieldnames=headers, delimiter=";", extrasaction="ignore", quotechar='"', quoting=csv.QUOTE_ALL)
+        writer = csv.DictWriter(f=output, fieldnames=headers, delimiter=";", extrasaction="ignore", **opts)
         writer.writeheader()
         writer.writerows(report)
     print(Fore.GREEN, f"File {filename} has been created.")
@@ -62,7 +63,6 @@ def output_results(results, detail):
         print(Fore.GREEN, "No results available for this keyword.")
         exit()
     for result in results:
-        print(result["dataset_id"])
         if detail:
             pprint(result)
     print(Fore.YELLOW, f"Resources : {len(results)}")
