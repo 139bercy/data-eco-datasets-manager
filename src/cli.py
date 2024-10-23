@@ -48,13 +48,14 @@ def dataset():
 
 
 @dataset.command("upsert")
-@click.argument("dataset-id")
-def upsert(dataset_id):
+@click.argument("dataset-id", help="Dataset id if known")
+@click.option("--uid", "-u", required=False, help="Dataset uid")
+def upsert(dataset_id, uid):
     """Create or update value in database"""
     repository = TinyDbDatasetRepository(DATABASE)
     data = repository.one(dataset_id=dataset_id)
 
-    automation_response = get_dataset_from_automation_api(dataset_uid=data.uid, output=False)
+    automation_response = get_dataset_from_automation_api(dataset_uid=uid or data.uid, output=False)
     automation_dto = automation_api_dataset_dto(automation_response)
 
     explore_response = get_dataset_from_api(name=dataset_id, output=False)
