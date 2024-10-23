@@ -45,6 +45,8 @@ def get_dataset_from_file():
 
 
 def get_attachments_files_extensions(files):
+    if not files:
+        return []
     extensions = defaultdict(int)
     for file in files:
         extension = mimetypes.guess_extension(file["mimetype"]).replace(".", "")

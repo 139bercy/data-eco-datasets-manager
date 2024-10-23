@@ -37,7 +37,10 @@ class InMemoryDatasetRepository(AbstractDatasetRepository):
             raise ValueError("Dataset with ID {} not found".format(dataset_id))
 
     def upsert(self, dataset):
-        pass
+        try:
+            self.add(dataset)
+        except ExistingRecordError:
+            self.update(dataset.dataset_id, dataset.__dict__)
 
 
 class TinyDbDatasetRepository(AbstractDatasetRepository):

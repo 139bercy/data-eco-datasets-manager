@@ -66,7 +66,10 @@ def test_search_string_in_database(dataset_fixture, tiny_db_repository):
 
 
 def test_dataset_id_should_be_unique(dataset_fixture, tiny_db_repository):
-    # Arrange & Act & Assert
-    with pytest.raises(ExistingRecordError):
-        create_dataset(repository=tiny_db_repository, values=dataset_fixture)
-        create_dataset(repository=tiny_db_repository, values=dataset_fixture)
+    # Arrange
+    create_dataset(repository=tiny_db_repository, values=dataset_fixture)
+    # Act
+    create_dataset(repository=tiny_db_repository, values=dataset_fixture)
+    # Assert
+    datasets = tiny_db_repository.get_all()
+    assert len(datasets) == 1

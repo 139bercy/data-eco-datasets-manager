@@ -10,6 +10,7 @@ os.environ["APP_ENV"] = "test"
 @pytest.fixture
 def dataset_fixture():
     return {
+        "uid": "azerty",
         "created": "2024-01-01 10:00:00",
         "updated": "2024-01-02 12:00:00",
         "dataset_id": "my-dataset",
@@ -29,6 +30,7 @@ def dataset_update_fixture():
             "processing": {"records_size": 123456},
             "default": {"records_count": 400},
         },
+        "attachments": [{"mimetype": "application/pdf", "title": "file-title.pdf"}]
     }
 
 

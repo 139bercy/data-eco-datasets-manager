@@ -11,3 +11,4 @@ requests==2.31.0
 setuptools~=60.2.0
 freezegun~=1.4.0
 tinydb==4.8.0
+requests_mock==1.12.1

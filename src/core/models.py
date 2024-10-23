@@ -55,19 +55,23 @@ class Dataset:
 
     def update(
         self,
+        attachments: list,
         download_count: int,
         api_call_count: int,
         popularity_score: float,
         records_size: int,
         size: str,
         records_count: int,
+        link: str,
     ):
+        self.attachments = attachments
         self.download_count = download_count
         self.api_call_count = api_call_count
         self.popularity_score = round(popularity_score, 1)
         self.records_size = records_size
         self.size = size
         self.records_count = records_count
+        self.link = link
 
     def __str__(self):
         return f"<Dataset: {self.dataset_id}>"
