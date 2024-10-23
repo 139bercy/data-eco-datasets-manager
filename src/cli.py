@@ -37,16 +37,32 @@ def cli():
     """Application CLI"""
 
 
+##############################
+# DATASETS
+##############################
+
 @cli.group("dataset")
 def dataset():
     """Dataset management"""
 
 
-@dataset.command("download")
-def download():
-    """Retrieve datasets from ODS Automation API"""
-    response = query_ods(url=f"{DOMAIN_NAME}/api/automation/v1.0/datasets/", params={"limit": 1000})
-    to_json(response=response, filename=RAW_DATASETS_PATH)
+@dataset.command("upsert")
+@click.argument("dataset-id")
+def upsert(dataset_id):
+    """Create or update value in database"""
+    repository = TinyDbDatasetRepository(DATABASE)
+    data = repository.one(dataset_id=dataset_id)
+
+    automation_response = get_dataset_from_automation_api(dataset_uid=data.uid, output=False)
+    automation_dto = automation_api_dataset_dto(automation_response)
+
+    explore_response = get_dataset_from_api(name=dataset_id, output=False)
+    stats_report = get_dataset_stats_report(data=explore_response, pprint=False)
+    ds_report = get_dataset_quality_score(data=explore_response, dcat=True, pprint=False)
+    result = {**automation_dto, **stats_report, **ds_report}
+
+    dataset = create_dataset(repository=repository, values=result)
+    pprint(dataset.__dict__)
 
 
 @dataset.command("export-csv")
@@ -72,13 +88,57 @@ def export_to_csv(input_file_date, exclude_not_published, exclude_restricted):
     to_csv(report=report, filename=output, headers=ADMIN_HEADERS)
 
 
-@dataset.command("check-quality")
+##############################
+# Dataset API
+##############################
+
+
+@dataset.group("api")
+def dataset_api():
+    """Retrieve intel from API"""
+
+
+@dataset_api.command("download")
+def download():
+    """Retrieve datasets from ODS Automation API"""
+    response = query_ods(url=f"{DOMAIN_NAME}/api/automation/v1.0/datasets/", params={"limit": 1000})
+    to_json(response=response, filename=RAW_DATASETS_PATH)
+
+
+@dataset_api.command("one")
+@click.option("--metas", "-m", default=None, type=click.Choice(["default", "dcat", "explore"]))
+@click.option("--attachments", "-a", is_flag=True, default=None)
+@click.option("--output", "-o", is_flag=True, default=False)
+@click.argument("name")
+def get_details(name, metas, attachments, output):
+    """Get dedicated dataset details. See options. """
+    data = get_dataset_from_api(name=name, output=output)
+    if metas:
+        pprint(data["results"][0]["metas"][metas])
+    if attachments:
+        extensions = get_attachments_files_extensions(files=data["results"][0]["attachments"])
+        pprint(extensions)
+    else:
+        print(data["results"][0].keys())
+
+
+@dataset.command("get")
+@click.argument("name")
+def database_get_dataset(name):
+    """Get intel on one dataset from database"""
+    repository = TinyDbDatasetRepository(DATABASE)
+    result = repository.one(dataset_id=name)
+    formatted = json.dumps(result.__dict__, indent=2, ensure_ascii=False)
+    click.echo(formatted)
+
+
+@dataset_api.command("check-quality")
 @click.option("-n", "--name", help="Dataset name", required=False)
 @click.option("-o", "--output", is_flag=True, help="File name if request needs to be exported to json")
 @click.option("--no-dcat", is_flag=True, help="Take out DCAT from score calculation")
 @click.option("-s", "--source", type=click.Choice(["api", "file"]), required=True, default="file", help="Source")
 def check_dataset_quality(name, output, no_dcat, source):
-    """Check dedicated dataset quality"""
+    """Check dataset quality from id"""
     data = {}
     if source == "api" and name is None:
         print("Dataset name is required\nAdd -n <dataset-name> to the command options")
@@ -91,24 +151,18 @@ def check_dataset_quality(name, output, no_dcat, source):
     get_dataset_quality_score(data=data, dcat=False if no_dcat else True, pprint=True)
 
 
-@dataset.command("get-details")
-@click.option("--metas", "-m", default=None, type=click.Choice(["default", "dcat", "explore"]))
-@click.option("--attachments", "-a", is_flag=True, default=None)
-@click.option("--output", "-o", is_flag=True, default=False)
+@dataset_api.command("republish")
 @click.argument("name")
-def get_details(name, metas, attachments, output):
-    """Export dedicated dataset details"""
-    data = get_dataset_from_api(name=name, output=output)
-    if metas:
-        pprint(data["results"][0]["metas"][metas])
-    if attachments:
-        extensions = get_attachments_files_extensions(files=data["results"][0]["attachments"])
-        pprint(extensions)
-    else:
-        print(data["results"][0].keys())
+def republish(name):
+    """Unpublish and republish dataset"""
+    dataset = get_dataset_from_api(name=name, output=False)
+    dataset_uid = dataset["results"][0]["dataset_uid"]
+    unpublish(dataset_uid=dataset_uid)
+    while publish(dataset_uid=dataset_uid) == 400:
+        time.sleep(1)
 
 
-@dataset.group("custom-view")
+@dataset_api.group("custom-view")
 def custom_view():
     """Add community view and discussions tab"""
 
@@ -133,62 +187,13 @@ def add_custom_view(file):
             add_community_custom_view(dataset_uid=uid)
 
 
-@dataset.command("republish")
-@click.argument("name")
-def republish(name):
-    """Unpublish and republish dataset"""
-    dataset = get_dataset_from_api(name=name, output=False)
-    dataset_uid = dataset["results"][0]["dataset_uid"]
-    unpublish(dataset_uid=dataset_uid)
-    while publish(dataset_uid=dataset_uid) == 400:
-        time.sleep(1)
-
+##############################
+# DATABASE
+##############################
 
 @cli.group("database")
 def database():
     """Database management"""
-
-
-@database.command("upsert")
-@click.argument("dataset-id")
-def upsert(dataset_id):
-    repository = TinyDbDatasetRepository(DATABASE)
-    data = repository.one(dataset_id=dataset_id)
-
-    automation_response = get_dataset_from_automation_api(dataset_uid=data.uid, output=False)
-    automation_dto = automation_api_dataset_dto(automation_response)
-
-    explore_response = get_dataset_from_api(name=dataset_id, output=False)
-    stats_report = get_dataset_stats_report(data=explore_response, pprint=False)
-    ds_report = get_dataset_quality_score(data=explore_response, dcat=True, pprint=False)
-    result = {**automation_dto, **stats_report, **ds_report}
-
-    dataset = create_dataset(repository=repository, values=result)
-    pprint(dataset.__dict__)
-
-
-@database.command("get")
-@click.argument("name")
-def database_get_dataset(name):
-    """Get intel on one dataset"""
-    repository = TinyDbDatasetRepository(DATABASE)
-    result = repository.one(dataset_id=name)
-    formatted = json.dumps(result.__dict__, indent=2, ensure_ascii=False)
-    click.echo(formatted)
-
-
-@cli.command("search")
-@click.argument("chain")
-@click.option("--field", "-f", default="dataset_id", help="Field for research")
-@click.option("--detail", "-d", is_flag=True, default=False, help="Print resources details")
-@click.option("--export", "-e", is_flag=True, default=False, help="Export resources to csv")
-@click.option("--role", "-r", default="user", help="Public for export", type=click.Choice(["admin", "user"]))
-@click.option("--header", "-h", help="Custom headers for exports", multiple=True)
-@click.option("--sort", "-s", help="Sort by (-)field")
-def search(chain, field, detail, export, role, header, sort):
-    """Retrieve datasets from database"""
-    repository = TinyDbDatasetRepository(DATABASE)
-    search_resources(chain, detail, export, field, header, repository, role, sort)
 
 
 @database.command("export")
@@ -305,3 +310,17 @@ def utils():
 def convert_size(bytes):
     result = make_bytes_size_human_readable(int(bytes))
     print(f"{bytes} octets => {result}")
+
+
+@cli.command("search")
+@click.argument("chain")
+@click.option("--field", "-f", default="dataset_id", help="Field for research")
+@click.option("--detail", "-d", is_flag=True, default=False, help="Print resources details")
+@click.option("--export", "-e", is_flag=True, default=False, help="Export resources to csv")
+@click.option("--role", "-r", default="user", help="Public for export", type=click.Choice(["admin", "user"]))
+@click.option("--header", "-h", help="Custom headers for exports", multiple=True)
+@click.option("--sort", "-s", help="Sort by (-)field")
+def search(chain, field, detail, export, role, header, sort):
+    """Retrieve datasets from database"""
+    repository = TinyDbDatasetRepository(DATABASE)
+    search_resources(chain, detail, export, field, header, repository, role, sort)
