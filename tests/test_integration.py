@@ -1,11 +1,8 @@
-import pytest
+from tinydb import Query
 
 from adapters.usecases import create_dataset, enrich_dataset
 from core.models import Dataset
-from infrastructure.exceptions import ExistingRecordError
-from infrastructure.repositories import InMemoryDatasetRepository, TinyDbDatasetRepository
-
-from tinydb import Query
+from infrastructure.repositories import InMemoryDatasetRepository
 
 
 def test_add_dataset_to_in_memory_repository(dataset_fixture):

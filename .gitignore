@@ -189,5 +189,5 @@ tmp.py
 data/*.csv
 data/*.json
 data/*.zip
-db.json
+db*.json
 

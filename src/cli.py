@@ -1,7 +1,6 @@
 import csv
 import json
 import time
-from collections import defaultdict
 
 import click
 
@@ -29,6 +28,8 @@ from services.community import add_community_custom_view
 from services.publications import unpublish, publish
 from services.quality import get_dataset_quality_score
 from services.stats import get_dataset_stats_report
+from users.repositories import TinyDbUserRepository
+from users.usecases import create_user
 
 
 @click.group()
@@ -148,6 +149,22 @@ def database():
     """Database management"""
 
 
+@database.group("users")
+def db_users():
+    """Manage users in database"""
+
+
+@db_users.command("import")
+def db_import_users():
+    repository = TinyDbUserRepository(DATABASE)
+    with open("data/users.json", "r") as file:
+        users = json.load(file)["results"]
+        for user in users:
+            create_user(repository=repository, user=user)
+    users = repository.all()
+    click.echo(click.style(f"{len(users)} users have been imported to database {DATABASE}", fg="green"))
+
+
 @database.command("upsert")
 @click.argument("dataset-id")
 def upsert(dataset_id):
@@ -235,11 +252,19 @@ def resources():
 
 
 @resources.group("users")
-def users():
+def user_resources():
     """Users management"""
 
 
-@users.command("export")
+@user_resources.command("download")
+def search_users():
+    """Add users to database"""
+    # users = security.get_all_users_from_api()
+    with open("users.json", "r") as file:
+        users = json.load(file)["results"]
+
+
+@user_resources.command("export")
 def export_users_to_csv():
     """Export users and permissions to csv"""
     data = security.get_users()

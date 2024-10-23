@@ -25,10 +25,10 @@ class InMemoryDatasetRepository(AbstractDatasetRepository):
     def get_one(self, dataset_id: str):
         raise NotImplementedError
 
-    def add(self, dataset):
+    def add(self, dataset: Dataset):
         return self.db.append(dataset)
 
-    def update(self, dataset_id, values):
+    def update(self, dataset_id: str, values: dict):
         dataset = next((ds for ds in self.db if ds.dataset_id == dataset_id), None)
         if dataset:
             [setattr(dataset, key, value) for key, value in values.items()]

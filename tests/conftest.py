@@ -30,8 +30,32 @@ def dataset_update_fixture():
             "processing": {"records_size": 123456},
             "default": {"records_count": 400},
         },
-        "attachments": [{"mimetype": "application/pdf", "title": "file-title.pdf"}]
+        "attachments": [{"mimetype": "application/pdf", "title": "file-title.pdf"}],
     }
+
+
+@pytest.fixture
+def users_fixture():
+    return {
+        "username": "john.doe",
+        "display_name": "John Doe",
+        "first_name": "John",
+        "last_name": "Doe",
+        "email": "john.doe@example.com",
+        "gravatar_url": "//www.gravatar.com/avatar/a0572a91c8cbe0aac14e1edea26fa77a?d=mm&s=80",
+        "account_type": "global",
+        "permissions": [],
+        "groups": [{"uid": "my-group"}],
+        "is_active": True,
+        "is_ods": False,
+        "explore_limits": {},
+        "management_limits": {},
+        "identity_providers": [{"uid": "my-provider"}],
+        "joined_at": "2024-01-01T12:00:00Z",
+        "last_seen_at": "2024-01-01T12:00:00Z",
+        "expires_at": None,
+        "last_login_at": "2024-01-01T12:00:00Z",
+        }
 
 
 @pytest.fixture
