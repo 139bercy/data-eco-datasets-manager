@@ -63,8 +63,6 @@ class TinyDbDatasetRepository(AbstractDatasetRepository):
     def one(self, dataset_id: str):
         query = Query()
         result = self.datasets.search(query.dataset_id == dataset_id)
-        print(len(result))
-        print(result)
         if len(result) != 0:
             dataset = Dataset(**result[0])
             return dataset

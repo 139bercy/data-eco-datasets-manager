@@ -5,21 +5,18 @@ from operator import itemgetter
 
 import click
 
-from core.api import (
-    query_ods,
-)
 from datasets.api import (
     get_dataset_from_api,
     get_dataset_from_automation_api,
     get_dataset_from_file,
     get_attachments_files_extensions,
     automation_api_dataset_dto,
+    download_datasets,
 )
 from datasets.usecases import create_dataset, search_resources
 from common import format_filename, make_bytes_size_human_readable
 from core.configuration import (
     RAW_DATASETS_PATH,
-    DOMAIN_NAME,
     ADMIN_HEADERS,
     QUALITY_HEADERS,
     GROUP_PERMISSIONS,
@@ -47,8 +44,21 @@ def dataset():
     """Dataset management"""
 
 
+@dataset.command("diff")
+@click.option("--file", "-f", required=False, help="File path")
+def display_new_datasets(file):
+    repository = TinyDbDatasetRepository(DATABASE)
+    data = {dataset["dataset_id"]: dataset for dataset in repository.all()}
+    datasets = download_datasets(file)
+    [
+        pprint(automation_api_dataset_dto(dataset))
+        for dataset in datasets
+        if data.get(dataset["dataset_id"], None) is None
+    ]
+
+
 @dataset.command("upsert")
-@click.argument("dataset-id", help="Dataset id if known")
+@click.argument("dataset-id")
 @click.option("--uid", "-u", required=False, help="Dataset uid")
 def upsert(dataset_id, uid):
     """Create or update value in database"""
@@ -99,7 +109,7 @@ def dataset_api():
 @dataset_api.command("download")
 def download():
     """Retrieve datasets from ODS Automation API"""
-    response = query_ods(url=f"{DOMAIN_NAME}/api/automation/v1.0/datasets/", params={"limit": 1000})
+    response = download_datasets()
     to_json(response=response, filename=RAW_DATASETS_PATH)
 
 

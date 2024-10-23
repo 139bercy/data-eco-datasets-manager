@@ -32,6 +32,15 @@ def get_dataset_from_file():
         return data
 
 
+def download_datasets(file):
+    if file:
+        with open(file, "r") as file:
+            return json.load(file)
+    else:
+        response = query_ods(url=f"{DOMAIN_NAME}/api/automation/v1.0/datasets/", params={"limit": 1000})
+        return response["results"]
+
+
 def get_attachments_files_extensions(files):
     if not files:
         return []
