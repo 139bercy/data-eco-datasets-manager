@@ -32,7 +32,7 @@ def get_dataset_from_file():
         return data
 
 
-def download_datasets(file):
+def download_datasets(file=None):
     if file:
         with open(file, "r") as file:
             return json.load(file)

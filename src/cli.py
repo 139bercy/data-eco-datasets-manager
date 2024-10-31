@@ -47,6 +47,7 @@ def dataset():
 @dataset.command("diff")
 @click.option("--file", "-f", required=False, help="File path")
 def display_new_datasets(file):
+    """Spot new datasets"""
     repository = TinyDbDatasetRepository(DATABASE)
     data = {dataset["dataset_id"]: dataset for dataset in repository.all()}
     datasets = download_datasets(file)
@@ -87,8 +88,7 @@ def export_to_csv(input_file_date, exclude_not_published, exclude_restricted, qu
     filename = format_filename(filename=f"datasets.json", directory="data", date=input_file_date)
     report = []
     with open(filename, "r") as file:
-        data = json.load(file)
-        datasets = data["results"]
+        datasets = json.load(file)
     if exclude_not_published:
         datasets = [d for d in datasets if d["is_published"] is True]
     if exclude_restricted:
@@ -109,7 +109,7 @@ def dataset_api():
 @dataset_api.command("download")
 def download():
     """Retrieve datasets from ODS Automation API"""
-    response = download_datasets()
+    response = download_datasets(file=None)
     to_json(response=response, filename=RAW_DATASETS_PATH)
 
 
@@ -207,7 +207,7 @@ def database():
 @click.option("--role", "-r", default="user", help="Public for export", type=click.Choice(["admin", "user"]))
 @click.option("--header", "-h", help="Custom headers for exports", multiple=True)
 @click.option("--sort", "-s", help="Sort by (-)field")
-@click.option("--quotes", "-q", is_flag=True, default=False, help="Output with quotes on CSV fields")
+@click.option("--quotes", is_flag=True, default=False, help="Output with quotes on CSV fields")
 def export_to_csv(exclude_not_published, exclude_restricted, quality, header, role, sort, quotes):
     """Append new datasets to database"""
     repository = TinyDbDatasetRepository(DATABASE)
@@ -351,6 +351,8 @@ def search(chain, field, detail, export, role, header, sort, quotes):
     repository = TinyDbDatasetRepository(DATABASE)
     headers = list(header) if len(header) != 0 else choose_headers(role=role)
     results = search_resources(chain=chain, detail=detail, field=field, repository=repository, sort=sort)
+    for result in enumerate(results):
+        print(f'{result[0]} - {result[1]["dataset_id"]}')
     if export:
         output = format_filename(f"datasets-{field}-{chain}.csv", "data")
         to_csv(report=results, filename=output, headers=headers, quotes=quotes)
