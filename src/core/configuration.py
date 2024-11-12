@@ -28,6 +28,7 @@ ADMIN_HEADERS = [
     "records_size",
     "size",
     "records_count",
+    "download_count",
     "link",
 ]
 
@@ -43,6 +44,7 @@ PUBLIC_HEADERS = [
     "records_size",
     "size",
     "records_count",
+    "download_count",
     "link",
 ]
 
