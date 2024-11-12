@@ -36,7 +36,7 @@ def choose_headers(role, custom: list = None):
     return headers
 
 
-def sort_by_field(data, field):
+def sort_by_field(data: list, field: str):
     if not field or data is None:
         return data
     reverse = True if field is not None and "-" in field else False

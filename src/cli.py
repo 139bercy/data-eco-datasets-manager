@@ -19,6 +19,7 @@ from core.configuration import (
     RAW_DATASETS_PATH,
     ADMIN_HEADERS,
     QUALITY_HEADERS,
+    AVAILABLE_PERMISSIONS,
     GROUP_PERMISSIONS,
     DATABASE,
 )
@@ -29,8 +30,9 @@ from services.community import add_community_custom_view
 from services.publications import unpublish, publish
 from services.quality import get_dataset_quality_score
 from services.stats import get_dataset_stats_report
+from services.resources import create_group
 from users.repositories import TinyDbUserRepository
-from users.usecases import create_user
+from users.usecases import import_user
 from users.api import get_all_users_from_api
 
 
@@ -256,12 +258,20 @@ def user_resources():
     """Users management"""
 
 
+@cli.command("create")
+@click.option("--email", "-e", required=True, help="User email")
+@click.option("--group", "-g", required=True, help="User group")
+def create_user(email, group):
+    """Create user"""
+    raise NotImplementedError
+
+
 @user_resources.command("import")
 def db_import_users():
     repository = TinyDbUserRepository(DATABASE)
     users = get_all_users_from_api()
     for user in users:
-        create_user(repository=repository, user=user)
+        import_user(repository=repository, user=user)
     click.echo(click.style(f"{len(users)} users have been imported to database {DATABASE}", fg="green"))
 
 
@@ -300,13 +310,15 @@ def groups():
 
 @groups.command("get")
 @click.option("--quotes", "-q", is_flag=True, default=False, help="Output with quotes on CSV fields")
-def export_groups_to_csv(quotes):
+@click.option("--sort", "-s", help="Sort by (-)field")
+def export_groups_to_csv(quotes, sort):
     """Export groups and permissions to csv"""
     data = security.get_groups()
+    result = sort_by_field(data=data, field=sort)
     headers = [
-        "uid",
         "created_at",
         "updated_at",
+        "uid",
         "title",
         "description",
         "permissions",
@@ -315,13 +327,30 @@ def export_groups_to_csv(quotes):
         "user_count",
     ]
     filename = format_filename(f"groups.csv", "data")
-    to_csv(report=data, filename=filename, headers=headers, quotes=quotes)
+    to_csv(report=result, filename=filename, headers=headers, quotes=quotes)
+
+
+@groups.command("create")
+@click.argument("title")
+@click.option("-p", "--permissions", help="Add specific permissions", multiple=True, type=click.Choice(AVAILABLE_PERMISSIONS))
+def resources_create_group(title, permissions):
+    click.echo(click.style("Permissions:", fg="green"))
+    for permission in enumerate(AVAILABLE_PERMISSIONS):
+        click.echo(click.style(f"\t{permission[0] + 1} {permission[1]}", fg="green"))
+    click.confirm('Do you want to continue?', abort=True)
+    group_permissions = GROUP_PERMISSIONS if not permissions else list(permissions)
+    create_group(title=title, permissions=group_permissions)
 
 
 @groups.command("permissions")
 @click.argument("group_id")
 @click.argument("title")
 def update_group_permissions(group_id, title):
+    """Update group with default permissions"""
+    click.echo(click.style("Permissions:", fg="green"))
+    for permission in GROUP_PERMISSIONS:
+        click.echo(click.style(f"\t{permission}", fg="green"))
+    click.confirm('Do you want to continue?', abort=True)
     security.update_one_group_permissions(group_id=group_id, title=title, permissions=GROUP_PERMISSIONS)
 
 
