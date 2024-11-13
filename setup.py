@@ -29,7 +29,7 @@ setup(
     description="Handle datasets using Opendatasoft API",
     entry_points={
         "console_scripts": [
-            "app=cli:cli",
+            "app=adapters.cli.commands:cli",
         ],
     },
     install_requires=requirements,
