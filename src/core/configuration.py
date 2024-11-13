@@ -69,19 +69,10 @@ AVAILABLE_PERMISSIONS = [
     "edit_theme",
 ]
 
-GROUP_PERMISSIONS = [
+DEFAULT_GROUP_PERMISSIONS = [
     "create_page",
     "manage_page",
     "create_dataset",
     "publish_dataset",
     "manage_dataset",
-    # "explore_monitoring",
-    # "edit_domain",
-    # "edit_page",
-    # "explore_restricted_page",
-    # "edit_dataset",
-    # "explore_restricted_dataset",
-    # "edit_reuse",
-    # "manage_subdomains",
-    # "edit_theme",
 ]
