@@ -23,7 +23,7 @@ def api_create_user(email, groups):
     raise NotImplementedError
 
 
-@users.command("export")
+@users.command("list")
 @click.option("--quotes", "-q", is_flag=True, default=False, help="Output with quotes on CSV fields")
 def export_users_to_csv(quotes):
     """List and export users"""

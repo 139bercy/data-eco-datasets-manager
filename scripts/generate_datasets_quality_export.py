@@ -50,7 +50,7 @@ with open(f"data/{filename}", "w") as report_file:
     ]
     writer = csv.DictWriter(report_file, fieldnames=headers, delimiter=";")
     writer.writeheader()
-    for ds in enumerate(datasets):
+    for ds in enumerate(datasets[::-1]):
         ds_id = ds[1]["dataset_id"]
         print(f"{ds[0]}- {ds_id}")
         params = {"where": f"dataset_id='{ds_id}'", "include_app_metas": True}

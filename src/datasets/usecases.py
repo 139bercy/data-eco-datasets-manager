@@ -22,7 +22,7 @@ def enrich_dataset(repository, dataset: Dataset, new_dataset: dict) -> Dataset:
     return dataset_copy
 
 
-def search_resources(chain, detail, field, repository, sort):
+def search_resources(chain: str, detail: bool, field: str, repository, sort: str):
     data = repository.search(field=field, value=chain)
     results = sort_by_field(data=data, field=sort)
     output_results(results=results, detail=detail)

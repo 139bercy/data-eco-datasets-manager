@@ -58,7 +58,7 @@ def to_csv(report: list, filename: str = FORMATTED_DATASETS_LIST, headers: list 
     print(Fore.GREEN, f"File {filename} has been created.")
 
 
-def output_results(results, detail):
+def output_results(results: list, detail: bool):
     if not results:
         print(Fore.GREEN, "No results available for this keyword.")
         exit()

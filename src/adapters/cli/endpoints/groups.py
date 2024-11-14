@@ -1,8 +1,11 @@
+import csv
+
 import click
 
 from common import format_filename
 from core.configuration import AVAILABLE_PERMISSIONS, DEFAULT_GROUP_PERMISSIONS
 from core.output import to_csv, sort_by_field
+from datasets.usecases import search_resources
 from services import security
 from services.resources import create_group
 from users.usecases import add_user_to_group
@@ -38,26 +41,40 @@ def api_update_group_permissions(group_id, title):
     security.update_one_group_permissions(group_id=group_id, title=title, permissions=DEFAULT_GROUP_PERMISSIONS)
 
 
+@groups_permissions.command("update-from-file")
+def api_update_group_permissions_from_file():
+    filename = format_filename("groups.csv", "data")
+    with open(filename, "r") as file:
+        reader = csv.DictReader(file, delimiter=";")
+        for group in reader:
+            security.update_one_group_permissions(group_id=group["uid"], title=group["title"], permissions=DEFAULT_GROUP_PERMISSIONS)
+
+
 @groups.command("list")
 @click.option("--quotes", "-q", is_flag=True, default=False, help="Output with quotes on CSV fields")
+@click.option("--filter", "-f", default=None, help="Filter on group id")
 @click.option("--sort", "-s", help="Sort by (-)field")
-def export_groups_to_csv(quotes, sort):
+def export_groups_to_csv(quotes, filter, sort):
     """List and export groups"""
     data = security.get_groups()
-    result = sort_by_field(data=data, field=sort)
+    if filter:
+        data = [group for group in data if filter in group["uid"]]
+    updated_data = [{**d, "permissions_count": len(d["permissions"])} for d in data]
+    updated_data = sort_by_field(data=updated_data, field=sort)
     headers = [
         "created_at",
         "updated_at",
         "uid",
         "title",
         "description",
+        "permissions_count",
         "permissions",
         "management_limits",
         "explore_limits",
         "user_count",
     ]
-    filename = format_filename(f"groups.csv", "data")
-    to_csv(report=result, filename=filename, headers=headers, quotes=quotes)
+    filename = format_filename(f"groups{f'-{filter}' if filter else ''}.csv", "data")
+    to_csv(report=updated_data, filename=filename, headers=headers, quotes=quotes)
 
 
 @groups.command("create")
